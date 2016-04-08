@@ -23,7 +23,9 @@ void P0() {
     for( uint32_t x = ( 1 << 8 ); x < ( 1 << 24 ); x++ ) {
       int r = is_prime( x ); // printf( "is_prime( %d ) = %d\n", x, r );
     }
-  }
+    for(int i = 0; i<10000000;i++){
 
-  return;
+    }
+    system_call(0);
+  }
 }

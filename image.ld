@@ -1,9 +1,13 @@
 ENTRY(reset_handler)
 SECTIONS {
   /* assign address (per  QEMU)  */
-  .       =     0x70010000; 
+  .       =     0x70010000;
+  start = .;
   /* place text segment(s)       */
-  .text : { *(.text .rodata) }
+  .text : {
+    CMakeFiles/kernel.dir/kernel/boot.S.o(.text)
+    *(.text .rodata)
+    }
   /* place data segment(s)       */        
   .data : {                           *(.data        ) } 
   /* place bss  segment(s)       */        

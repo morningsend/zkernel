@@ -1,5 +1,15 @@
 #include "kernel.h"
 
+
+static void doStuff(char ch){
+	while(1){
+		for(int x = 0; x < 10000000; x++){
+
+		}
+		PL011_putc(UART0, ch);
+	}
+}
+
 void kernel_init(int* a){
 	TIMER0->Timer1Load     = 0x00080000; 
 	TIMER0->Timer1Ctrl     = 0x00000042; 
@@ -12,6 +22,8 @@ void kernel_init(int* a){
     
 	enable_irq_interrupt();
 	enable_fiq_interrupt();
+	PL011_putc(UART0, 'A');
+	kernel_ready();
 }
 
 
@@ -32,11 +44,20 @@ void kernel_irq_handler() {
 }
 
 void kernel_svc_handler(int id, void* sp){
+	PL011_putc(UART0,(char)id+'0');
 	switch(id){
 		case 0:
+			PL011_putc(UART0,'s');
 			break;
 		default:
 			break;
 	}
 }
 
+void kernel_main_loop(){
+
+	doStuff('a');
+}
+void kernel_ready(){
+	_start();
+}

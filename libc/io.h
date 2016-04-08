@@ -14,6 +14,10 @@
 #define NULL ((void * )0)
 #endif
 
+#define stdin 0
+#define stdout 1
+#define stderr 2
+
 typedef struct io_stream_struct{
     void* resource;
 } io_stream;

@@ -1,17 +1,86 @@
 /*We define cpu mode constants*/
 #include "boot.h"
 
-.equ MODE_USER, 0x10
-.equ MODE_FIG, 0x11
-.equ MODE_IRQ, 0x12
-.equ MODE_SUPERVISOR, 0x13
-.equ MODE_ABORT, 0x17
-.equ MODE_UNDEFINED, 0x1B
-.equ MODE_SYS, 0x1F
 
-/* FIQ and IRQ interrupt mask bits */
-.equ I_BIT, 0x80
-.equ F_BIT, 0x40
+
+ .global reset_handler
+
+reset_handler:
+	@LDR r0, =vector_table
+	@MCR p15, 0, r0, c12, c0, 0 /* Set vector base address register to address of vector table*/
+
+    bl vector_table_relocate
+
+	/* go to svc, irq, etc., modes and set up stack */
+	mov r0, #MODE_IRQ
+	orr r0, r0, #I_BIT
+	orr r0, r0, #F_BIT
+	msr cpsr_c, r0
+	ldr r1, =irq_stack_base
+	mov sp, r1
+
+	mov r0, #MODE_SUPERVISOR
+	orr r0, r0, #I_BIT
+	orr r0, r0, #F_BIT
+	msr cpsr_c, r0
+	ldr r1, =svc_stack_base
+	mov sp, r1
+
+	sub sp, sp, #68
+	/* call kernel initialization function */
+	mov r0, sp
+	bl kernel_init
+	ldmia sp!, { r0, lr }         @ load   USR mode PC and CPSR
+	msr   spsr, r0                @ set    USR mode        CPSR
+	ldmia sp, { r0-r12, sp, lr }^ @ load   USR mode registers
+	add   sp, sp, #60             @ update SVC mode SP
+
+    cmp lr, #0
+    bne return_user_mode
+
+    b kernel_ready
+return_user_mode:
+	movs  pc, lr                  @ return from interrupt
+	b .
+
+undefined_handler:
+	b undefined_handler
+
+supervisor_call_handler:
+	sub   lr, lr, #0              @ correct return address
+	sub   sp, sp, #60             @ update SVC mode stack
+	stmia sp, { r0-r12, sp, lr }^ @ store  USR registers
+	mrs   r0, spsr                @ get    USR        CPSR
+	stmdb sp!, { r0, lr }         @ store  USR PC and CPSR
+
+	mov   r1, sp                  @ set    C function arg. = SP
+	ldr   r0, [ lr, #-4 ]         @ load                     svc instruction
+	bic   r0, r0, #0xFF000000     @ set    C function arg. = svc immediate
+	bl    kernel_svc_handler      @ invoke C function
+
+	ldmia sp!, { r0, lr }         @ load   USR mode PC and CPSR
+	msr   spsr, r0                @ set    USR mode        CPSR
+	ldmia sp, { r0-r12, sp, lr }^ @ load   USR mode registers
+	add   sp, sp, #60             @ update SVC mode SP
+	movs  pc, lr                  @ return from interrupt
+
+prefetch_abort_handler:
+	b prefetch_abort_handler
+
+data_abort_handler:
+	b data_abort_handler
+
+irq_handler:
+	sub   lr, lr, #4              @ correct return address
+	stmfd sp!, { r0-r3, ip, lr }  @ save    caller-save registers
+
+	bl    kernel_irq_handler      @ invoke C function
+
+	ldmfd sp!, { r0-r3, ip, lr }  @ restore caller-save registers
+	movs  pc, lr                  @ return from interrupt
+
+fiq_handler:
+	b fiq_handler
 
 vector_table:
 	LDR pc, reset_address
@@ -22,6 +91,20 @@ vector_table:
 	B .
 	LDR pc, irq_address
 	LDR pc, fiq_address
+
+vector_table_relocate:
+    mov r0, #0
+    ldr r1, =vector_table
+    ldr r2, =vector_table_relocate
+
+vec_reloc_loop:
+    ldr r3, [r1], #4
+    str r3, [r0], #4
+    cmp r1,r2
+    bne vec_reloc_loop
+
+    mov pc, lr
+@end vector_table_relocate
 
 reset_address: .word reset_handler
 undefined_address: .word undefined_handler
@@ -67,76 +150,6 @@ disable_fiq_interrupt:
 
 
 /* The reset handler is the first code that runs when CPU boots up
- * We need to initialize the stack pointers, invalidate cache and 
+ * We need to initialize the stack pointers, invalidate cache and
  * setup MMU and branch to C code which containers kernel initialization code.
  */
- .global reset_handler
-
-reset_handler:
-	LDR r0, =vector_table
-	MCR p15, 0, r0, c12, c0, 0 /* Set vector base address register to address of vector table*/
-
-	/* go to svc, irq, etc., modes and set up stack */
-	mov r0, #MODE_IRQ
-	orr r0, r0, #I_BIT
-	orr r0, r0, #F_BIT
-	msr cpsr_c, r0
-	ldr r1, =irq_stack_base
-	mov sp, r1
-
-	mov r0, #MODE_SUPERVISOR
-	orr r0, r0, #I_BIT
-	orr r0, r0, #F_BIT
-	msr cpsr_c, r0
-	ldr r1, =svc_stack_base
-	mov sp, r1
-
-	sub sp, sp, #68
-	/* call kernel initialization function */
-	mov r0, sp
-	bl kernel_init
-	ldmia sp!, { r0, lr }         @ load   USR mode PC and CPSR
-	msr   spsr, r0                @ set    USR mode        CPSR
-	ldmia sp, { r0-r12, sp, lr }^ @ load   USR mode registers
-	add   sp, sp, #60             @ update SVC mode SP
-	movs  pc, lr                  @ return from interrupt
-
-undefined_handler:
-	b undefined_handler
-
-supervisor_call_handler:
-	sub   lr, lr, #0              @ correct return address
-	sub   sp, sp, #60             @ update SVC mode stack
-	stmia sp, { r0-r12, sp, lr }^ @ store  USR registers
-	mrs   r0, spsr                @ get    USR        CPSR
-	stmdb sp!, { r0, lr }         @ store  USR PC and CPSR
-
-	mov   r1, sp                  @ set    C function arg. = SP
-	ldr   r0, [ lr, #-4 ]         @ load                     svc instruction
-	bic   r0, r0, #0xFF000000     @ set    C function arg. = svc immediate
-	bl    kernel_svc_handler      @ invoke C function
-
-	ldmia sp!, { r0, lr }         @ load   USR mode PC and CPSR
-	msr   spsr, r0                @ set    USR mode        CPSR
-	ldmia sp, { r0-r12, sp, lr }^ @ load   USR mode registers
-	add   sp, sp, #60             @ update SVC mode SP
-	movs  pc, lr                  @ return from interrupt
-
-prefetch_abort_handler:
-	b prefetch_abort_handler
-
-data_abort_handler:
-	b data_abort_handler
-
-irq_handler:
-	sub   lr, lr, #4              @ correct return address
-	stmfd sp!, { r0-r3, ip, lr }  @ save    caller-save registers
-
-	bl    kernel_irq_handler      @ invoke C function
-
-	ldmfd sp!, { r0-r3, ip, lr }  @ restore caller-save registers
-	movs  pc, lr                  @ return from interrupt
-
-fiq_handler:
-	b fiq_handler
-

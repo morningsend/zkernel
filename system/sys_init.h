@@ -2,7 +2,9 @@
 // Created by zaiyangli on 4/8/16.
 //
 
-#ifndef APP1_SYS_INIT_H
-#define APP1_SYS_INIT_H
+#ifndef _SYS_INIT_H
+#define _SYS_INIT_H
 
-#endif //APP1_SYS_INIT_H
+void system_init();
+
+#endif //_SYS_INIT_H
