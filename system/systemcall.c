@@ -1,8 +1,5 @@
 #include "systemcall.h"
 
-int system_call(int sys_call_number, ...){
-
-    asm volatile("svc #0");
-    return 0;
+void system_call(int n){
+    _SYS_CALL_(1);
 }
-

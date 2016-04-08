@@ -6,5 +6,5 @@
 
 
 void system_init(){
-
+    _start();
 }

@@ -5,5 +5,5 @@
 #include <stdint.h>
 
 #include "../libc/io.h"
-
+void P2();
 #endif

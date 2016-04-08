@@ -2,7 +2,13 @@
 // Created by zaiyangli on 4/8/16.
 //
 
-#ifndef APP1_PROGRAMS_H
-#define APP1_PROGRAMS_H
+#ifndef _PROGRAMS_H
+#define _PROGRAMS_H
+#include "P0.h"
+#include "P1.h"
+#include "P2.h"
 
-#endif //APP1_PROGRAMS_H
+
+void _start();
+
+#endif //_PROGRAMS_H

@@ -1,14 +1,6 @@
 #include "kernel.h"
 
 
-static void doStuff(char ch){
-	while(1){
-		for(int x = 0; x < 10000000; x++){
-
-		}
-		PL011_putc(UART0, ch);
-	}
-}
 
 void kernel_init(int* a){
 	TIMER0->Timer1Load     = 0x00080000; 
@@ -23,7 +15,8 @@ void kernel_init(int* a){
 	enable_irq_interrupt();
 	enable_fiq_interrupt();
 	PL011_putc(UART0, 'A');
-	kernel_ready();
+
+	asm("svc #1");
 }
 
 
@@ -54,10 +47,6 @@ void kernel_svc_handler(int id, void* sp){
 	}
 }
 
-void kernel_main_loop(){
-
-	doStuff('a');
-}
 void kernel_ready(){
-	_start();
+	system_init();
 }

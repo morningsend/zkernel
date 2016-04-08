@@ -2,6 +2,7 @@
 #define _SYSTEM_CALL_H_
 #include <stdarg.h>
 
-int system_call(int sys_call_number, ...);
-
-#endif 
+#define _SYS_CALL_(ID) asm("svc #"_SYS_CALL_NO_(ID))
+#define _SYS_CALL_NO_(num) #num
+void system_call(int);
+#endif

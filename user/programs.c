@@ -3,3 +3,7 @@
 //
 
 #include "programs.h"
+
+void _start(){
+    P0();
+}
