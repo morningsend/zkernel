@@ -1,5 +1,5 @@
 /*We define cpu mode constants*/
-
+#include "boot.h"
 
 .equ MODE_USER, 0x10
 .equ MODE_FIG, 0x11
@@ -35,7 +35,7 @@ fiq_address: .word fiq_handler
 .global enable_irq_interrupt
 .global disable_irq_interrupt
 .global enable_fiq_interrupt
-.global enable_fiq_interrupt 
+.global disable_fiq_interrupt
 
 enable_irq_interrupt:
 	mrs r0, cpsr

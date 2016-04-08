@@ -13,7 +13,6 @@ CMAKE_FORCE_C_COMPILER( ${LINARO_PATH}${CROSS_COMPILE}gcc GNU )
 set( CMAKE_OBJCOPY ${LINARO_PATH}${CROSS_COMPILE}objcopy
         CACHE FILEPATH "The toolchain objcopy command " FORCE)
 
-set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=cortex-a8 -mabi=aapcs -ffreestanding -std=gnu99")
 
 set( CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T ${LINKER_FILE} -lc -lgcc")
 

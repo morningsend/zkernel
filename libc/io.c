@@ -13,6 +13,14 @@ io_buffer stderr_buffer = {
 };
 
 
+static uint32_t format_float(double val, char* buf, uint32_t size){
+    return 0;
+}
+
+static uint32_t format_int(double val, char* buf, uint32_t size){
+    return 0;
+}
+
 void printf(const char* format, ...){
     char convertBuffer[BUF_SIZE];
     va_list vars;
