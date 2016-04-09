@@ -11,7 +11,7 @@ reset_handler:
 
     bl vector_table_relocate
 
-	/* go to svc, irq, etc., modes kernel_ready_address: .word kernel_readyand set up stack */
+	/* go to svc, irq, etc., modes and set up stack */
 	mov r0, #MODE_IRQ
 	orr r0, r0, #I_BIT
 	orr r0, r0, #F_BIT
@@ -26,11 +26,11 @@ reset_handler:
 
     bl kernel_init
 
-    mov r0, #0x10
-    msr spsr, r0
-    ldr sp, =user_stack_base
+    mov  r0, #0x10
+    msr  spsr, r0
+    ldr  sp, =user_stack_base
 
-    ldr lr, kernel_ready_address
+    ldr  lr, kernel_ready_address
     movs pc, lr
 
 	b .
@@ -45,11 +45,15 @@ supervisor_call_handler:
 	mrs   r0, spsr                @ get    USR        CPSR
 	stmdb sp!, { r0, lr }         @ store  USR PC and CPSR
 
-	mov   r1, sp                  @ set    C function arg. = SP
-	ldr   r0, [ lr, #-4 ]         @ load                     svc instruction
-	bic   r0, r0, #0xFF000000     @ set    C function arg. = svc immediate
-	bl    kernel_svc_handler      @ invoke C function
+	bl    kernel_syscall_dispatch @ invoke C function, system call number is passed as r7
+    mov   r8, r0
+    add   sp, sp, #8
+    ldmia sp, { r0-r6 }
+    ldr   lr, =exec_handler_end
+    mov   pc, r8
 
+exec_handler_end:
+    sub   sp,sp,#8
 	ldmia sp!, { r0, lr }         @ load   USR mode PC and CPSR
 	msr   spsr, r0                @ set    USR mode        CPSR
 	ldmia sp, { r0-r12, sp, lr }^ @ load   USR mode registers

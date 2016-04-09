@@ -5,7 +5,7 @@
 #ifndef _PROCESS_H
 #define _PROCESS_H
 
-#include <stdint-gcc.h>
+
 
 #define PROCESS_NEW 0
 #define PROCESS_RUNNING 1

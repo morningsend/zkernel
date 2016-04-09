@@ -1,5 +1,5 @@
-#include "io.h"
-#include "test/test.h"
+#include "../io.h"
+#include "test.h"
 int main() {
 
     runTests();

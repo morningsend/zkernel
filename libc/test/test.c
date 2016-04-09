@@ -105,40 +105,40 @@ void testPrintf(){
     /**
      * printf should print integer with %d flag.
      */
-    initialize_buffer(&stdout_buffer, 1, 1);
+    clear_buffer(&stdout_buffer, 1, 1);
     printf("%d", 10);
     assert(strcmp(stdout_buffer.buf, "10")==0);
     /**
      * printf should print string with %s flag.
      */
-    initialize_buffer(&stdout_buffer, 1, 1);
+    clear_buffer(&stdout_buffer, 1, 1);
     printf("%s", "hello world");
     assert(strcmp(stdout_buffer.buf, "hello world")==0);
 
     /***
      * printf should print a character with %c flag
      */
-    initialize_buffer(&stdout_buffer,1, 1);
+    clear_buffer(&stdout_buffer, 1, 1);
     printf("%c", 'a');
     assert(strcmp(stdout_buffer.buf, "a")==0);
     /**
      * printf should print unformatted text
      */
-    initialize_buffer(&stdout_buffer, 1, 1);
+    clear_buffer(&stdout_buffer, 1, 1);
     printf("hello world");
     assert(strcmp(stdout_buffer.buf, "hello world")==0);
 
     /**
      * printf should print unformatted text with formatted data
      */
-    initialize_buffer(&stdout_buffer, 1, 1);
+    clear_buffer(&stdout_buffer, 1, 1);
     printf("a=%d;", 10);
     assert(strcmp(stdout_buffer.buf, "a=10;")==0);
 
     /**
      * printf should work with any number of arguments
      */
-    initialize_buffer(&stdout_buffer, 1, 1);
+    clear_buffer(&stdout_buffer, 1, 1);
     printf("%d,%d,%d,%d,%d,%d,%d,%d,%d",1,2,3,4,5,6,7,8,9);
     assert(strcmp(stdout_buffer.buf, "1,2,3,4,5,6,7,8,9")==0);
 }

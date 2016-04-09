@@ -26,7 +26,7 @@ void P0() {
     for(int i = 0; i<10000000;i++){
 
     }
+    exit(100);
 
-    system_call(0);
   }
 }

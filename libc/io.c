@@ -2,24 +2,9 @@
 // Created by zaiyangli on 4/2/16.
 //
 #include "io.h"
-io_buffer stdout_buffer = {
-        .buf="", .size=0, .auto_flush=1,.stream = NULL
-};
-io_buffer stdin_buffer = {
-        .buf="", .size=0, .auto_flush=1,.stream = NULL
-};
-io_buffer stderr_buffer = {
-        .buf="", .size=0, .auto_flush=1,.stream = NULL
-};
 
 
-static uint32_t format_float(double val, char* buf, uint32_t size){
-    return 0;
-}
 
-static uint32_t format_int(double val, char* buf, uint32_t size){
-    return 0;
-}
 
 void printf(const char* format, ...){
     char convertBuffer[BUF_SIZE];
@@ -79,58 +64,23 @@ void printf(const char* format, ...){
         }
     }
     va_end(vars);
+    stream_flush(&stdout_stream);
 }
 
-void initialize_buffer(io_buffer *buffer, int auto_flush, int clear){
-    buffer->size=0;
-    buffer->auto_flush = auto_flush;
-    if(clear){
-        memset(buffer->buf, BUF_SIZE, 0);
-    }
+void puts(char* str){
+    stream_write(&stdout_stream, str, strlen(str));
+    stream_flush(&stdout_stream);
 }
-void write_to_buffer(io_buffer* buffer, const char* str, int size){
-    //assert(buffer->size <= BUF_SIZE);
-    while(size > 0) {
-        int free = BUF_SIZE - buffer->size;
-        int overflow = size - free;
-        if (overflow < 1) {
-            memcpy(&buffer->buf[buffer->size], str, size);
-            buffer->size += size;
-            return;
-        }else {
-            memcpy(&buffer->buf[buffer->size], str, free);
-            if(buffer->auto_flush)
-                flush_buffer(buffer, buffer->stream);
-            else return;
-            str += size;
-            size -= free;
-        }
-    }
+void puts_n(char* str, int len){
+    stream_write(&stdout_stream, str, len);
 }
-
-int is_buffer_full(io_buffer* buffer){
-    return buffer->size==BUF_SIZE;
-}
-void flush_buffer(io_buffer* buffer, io_stream* st){
-    int i = 0;
-    memset(buffer->buf, BUF_SIZE, 0);
-    buffer->size=0;
-}
-
-void puts(const char* str){
-    write_to_buffer(&stdout_buffer, str, strlen(str));
-}
-void puts_n(const char* str, int len){
-    write_to_buffer(&stdout_buffer, str, len);
-}
-void gets(const char* buf, int size){
-
+void gets(char* buf, int size){
+    stream_read(&stdin_stream, buf, size);
 }
 void putchar(int c){
     char ch[1] = {(char)c};
-
-    write_to_buffer(&stdout_buffer, ch, 1);
+    stream_write(&stdin_stream, ch, 1);
 }
 int getchar(){
-    return 0;
+    return EOF;
 }

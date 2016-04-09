@@ -25,4 +25,6 @@ SECTIONS {
 
   . = . + 0x00001000;
   user_stack_base = .;
+
+  /* PROVIDE (end = .); */
 }

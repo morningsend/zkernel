@@ -12,11 +12,14 @@ void kernel_init(int* a){
 	GICC0->CTLR            = 0x00000001; 
 	GICD0->CTLR            = 0x00000001;
     
-	enable_irq_interrupt();
-	enable_fiq_interrupt();
-	PL011_putc(UART0, 'A');
 
-	asm("svc #1");
+	PL011_puts(UART0, "kernel starting\n");
+    syscall_init();
+    PL011_puts(UART0, "init system call table\n");
+
+    system_init();
+    enable_irq_interrupt();
+    enable_fiq_interrupt();
 }
 
 
@@ -36,17 +39,18 @@ void kernel_irq_handler() {
   GICC0->EOIR = id;
 }
 
-void kernel_svc_handler(int id, void* sp){
-	PL011_putc(UART0,(char)id+'0');
-	switch(id){
-		case 0:
-			PL011_putc(UART0,'s');
-			break;
-		default:
-			break;
-	}
+void kernel_syscall_dispatch(){
+    uint32_t syscall_number = 0;
+    void* p_handler = NULL;
+    _SYS_CALL_GET_NUMBER(syscall_number);
+    p_handler = get_syscall_handler(syscall_number);
+    asm(
+        "mov r0, %[handler]"
+        :/*no output*/
+        :[handler]"r"(p_handler)
+    );
 }
 
 void kernel_ready(){
-	system_init();
+	user_init();
 }

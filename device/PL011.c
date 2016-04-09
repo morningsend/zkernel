@@ -39,14 +39,14 @@ char itox( int  x ) {
   return -1;
 }
 
-void    PL011_putc( PL011_t* d, uint8_t x ) {
+void inline PL011_putc( PL011_t* d, uint8_t x ) {
   while( d->FR & 0x20 ) {
     /* wait while transmit FIFO is full */
   }
   d->DR = x;
 }
 
-uint8_t PL011_getc( PL011_t* d            ) {
+uint32_t PL011_getc( PL011_t* d            ) {
   while( d->FR & 0x10 ) {
     /* wait while receive FIFO is empty */
   }
@@ -54,14 +54,29 @@ uint8_t PL011_getc( PL011_t* d            ) {
   return d->DR;
 }
 
-void    PL011_puth( PL011_t* d, uint8_t x ) {
+void inline PL011_puth( PL011_t* d, uint8_t x ) {
   PL011_putc( d, itox( ( x >> 4 ) & 0xF ) );
   PL011_putc( d, itox( ( x >> 0 ) & 0xF ) );
 }
 
-uint8_t PL011_geth( PL011_t* d            ) {
+uint8_t PL011_geth( PL011_t* d ) {
   uint8_t x  = ( xtoi( PL011_getc( d ) ) << 4 );
           x |= ( xtoi( PL011_getc( d ) ) << 0 );
 
   return x;
+}
+
+
+void PL011_put_bytes( PL011_t* device, const uint8_t* bytes, uint32_t size){
+  for(int i = 0; i< size; i++){
+    PL011_putc(device, bytes[i]);
+  }
+}
+
+void PL011_puts( PL011_t* device, const char* bytes) {
+  int i = 0;
+  while(bytes[i] != 0){
+    PL011_putc(device, bytes[i]);
+    i++;
+  }
 }
