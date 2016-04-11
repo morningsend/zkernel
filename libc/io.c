@@ -16,7 +16,7 @@ void printf(const char* format, ...){
     unsigned int uiVal = 0;
     int length = 0;
     va_start(vars, format);
-    
+
     int skip = 0;
     while( *format != '\0' ){
         for(; *format!='\0' && *format!='%' ; format++) skip++;
@@ -72,9 +72,10 @@ void printf(const char* format, ...){
     stream_flush(&stdout_stream);
 }
 
-void puts(char* str){
-    stream_write(&stdout_stream, str, strlen(str));
+int puts(char* str){
+    int written = stream_write(&stdout_stream, str, strlen(str));
     stream_flush(&stdout_stream);
+    return written;
 }
 void puts_n(char* str, int len){
     stream_write(&stdout_stream, str, len);

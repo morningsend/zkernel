@@ -6,9 +6,14 @@
 #define _TEST_CASE_H
 
 #include "../libc/io.h"
-#include "assert.h"
+
+#define _TEST_CASE_ASSERT_LINK 1
+
+#include "zunit_assert.h"
+
 
 #define _TEST_CASE_STR_BUF_SIZE 128
+
 
 typedef struct test_case_struct {
     int total;
@@ -19,5 +24,8 @@ typedef struct test_case_struct {
 
 void test_case_begin(char* description);
 void test_case_end();
+
+void test_case_assert_fail();
+void test_case_assert_pass();
 
 #endif //_TEST_CASE_H

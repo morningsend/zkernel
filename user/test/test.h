@@ -4,7 +4,8 @@
 
 #ifndef _TEST_H
 #define _TEST_H
-#include "../../libc/assert.h"
+
+#include "../../zunit/zunit.h"
 #include "../../libc/io.h"
 void runTests();
 void testPuts();

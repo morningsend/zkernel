@@ -22,7 +22,7 @@ void printf(const char* format, ...);
 void putchar(int c);
 int getchar();
 
-void puts( char* str);
+int puts( char* str);
 void puts_n( char* str, int len);
 void gets( char* buf, int size);
 

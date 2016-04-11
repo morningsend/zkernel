@@ -32,3 +32,12 @@ static void _print_test_case_summary(test_case_t* info){
     printf("Test case summary: %s\n", info->description);
     printf("Total: %d| %d passed/ %d failed\n", info->total, info->pass, info->fail);
 }
+
+void test_case_assert_fail(){
+    current_test_case.fail++;
+    current_test_case.total++;
+}
+void test_case_assert_pass(){
+    current_test_case.pass++;
+    current_test_case.total++;
+}

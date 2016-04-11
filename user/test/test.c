@@ -3,6 +3,12 @@
 //
 
 #include "test.h"
+#include "../../libc/assert.h"
+#if !defined(assert)
+#define assert(cond) ""
+#endif
+
+
 void testString(){
 
     /**
@@ -27,10 +33,6 @@ void testString(){
     assert(len == 0);
     len = strlen("1234");
     assert(len == 4);
-
-
-
-
     /**
      * str1 == str2 after strcpy(str2, str1)
      */
@@ -127,8 +129,10 @@ void testPrintf(){
 
 }
 void testPuts(){
-
-    puts("hello world");
+    char m[] = "hello world\n";
+    int written = puts(m);
+    assert_int_equal("puts(str) returns strlen(str)", strlen(m), written);
+    assert_int_equal("puts(str) returns strlen(str)", strlen(m)-1, written);
 }
 void testExit(){
     exit(10);
@@ -151,10 +155,12 @@ void testAssert(){
     assert(0);
     assert(3!=3);
 }
+
 void runTests(){
 
     testString();
     testPrintf();
     testMath();
     testAssert();
+    testPuts();
 }
