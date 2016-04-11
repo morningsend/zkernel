@@ -58,6 +58,11 @@ void printf(const char* format, ...){
                 case 'u':
                     uiVal = va_arg(vars, unsigned int);
                     format++;
+                    break;
+                case '%':
+                    putchar('%');
+                    format++;
+                    break;
                 default:
                     break;
             }

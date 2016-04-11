@@ -8,7 +8,10 @@
 #include "P1.h"
 #include "P2.h"
 
+#define UNIT_TEST
 
+
+
+void startupTests();
 void _start();
-
 #endif //_PROGRAMS_H

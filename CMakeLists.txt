@@ -12,16 +12,15 @@ set(RELEASE_SOURCE_FILES libc/string.c libc/string.h libc/math.h libc/math.c lib
         device/device.h device/device.c system/systemcall.c system/systemcall.h system/syslib.c system/syslib.h
         user/P0.h user/P0.c user/P1.h user/P1.c user/P2.h user/P2.c
         device/disk.c device/disk.h device/GIC.h device/GIC.c device/PL011.c device/PL011.h device/SP804.c device/SP804.h
-        kernel/boot.h kernel/process.c kernel/process.h kernel/sys_init.c kernel/sys_init.h user/programs.c user/programs.h kernel/syscall_def.h kernel/syscall_def.c kernel/syscall_impl.c kernel/syscall_impl.h libc/iostream.c libc/iostream.h libc/iobuffer.c libc/iobuffer.h)
+        kernel/boot.h kernel/process.c kernel/process.h kernel/sys_init.c kernel/sys_init.h user/programs.c user/programs.h kernel/syscall_def.h kernel/syscall_def.c kernel/syscall_impl.c kernel/syscall_impl.h libc/iostream.c libc/iostream.h libc/iobuffer.c libc/iobuffer.h
+        user/test/test.c user/test/test.h
+        libc/assert.c libc/assert.h kernel/heap.c kernel/heap.h kernel/context.c kernel/context.h libc/array.c libc/array.h zunit/assert.c zunit/assert.h zunit/test_case.c zunit/test_case.h)
 
-set(TEST_SOURCE_FILES libc/test/test-main.c libc/test/test.c libc/test/test.h libc/string.c libc/string.h libc/math.h libc/math.c libc/io.h libc/io.c )
 
 set(OUTPUT_PATH "${CMAKE_SOURCE_DIR}/build/")
 
 
-add_executable(app1 main.c)
-add_executable(kernel ${RELEASE_SOURCE_FILES})
-add_executable(tests ${TEST_SOURCE_FILES})
+add_executable(kernel ${RELEASE_SOURCE_FILES} libc/assert.c libc/assert.h)
 
 add_custom_command(
         TARGET kernel POST_BUILD

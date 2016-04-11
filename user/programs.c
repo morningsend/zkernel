@@ -4,6 +4,15 @@
 
 #include "programs.h"
 
+#if defined(UNIT_TEST)
+#include "test/test.h"
+#endif
+
 void _start(){
-    P0();
+    startupTests();
+}
+void startupTests(){
+#if defined(UNIT_TEST)
+    runTests();
+#endif
 }

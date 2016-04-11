@@ -3,9 +3,6 @@
 //
 
 #include "test.h"
-
-
-
 void testString(){
 
     /**
@@ -99,51 +96,65 @@ void testString(){
 }
 
 void testPrintf(){
-    /**
-     * printf should print formatted string
+    /*
+     * printf should output strings to the console
      */
-    /**
-     * printf should print integer with %d flag.
-     */
-    clear_buffer(&stdout_buffer, 1, 1);
-    printf("%d", 10);
-    assert(strcmp(stdout_buffer.buf, "10")==0);
-    /**
-     * printf should print string with %s flag.
-     */
-    clear_buffer(&stdout_buffer, 1, 1);
-    printf("%s", "hello world");
-    assert(strcmp(stdout_buffer.buf, "hello world")==0);
+    printf("printf should output strings to the console");
 
     /***
-     * printf should print a character with %c flag
+     * printf should output integers to the console
+     *
      */
-    clear_buffer(&stdout_buffer, 1, 1);
-    printf("%c", 'a');
-    assert(strcmp(stdout_buffer.buf, "a")==0);
+    printf("%d", 12);
     /**
-     * printf should print unformatted text
+     * printf should print nothing for empty string
      */
-    clear_buffer(&stdout_buffer, 1, 1);
-    printf("hello world");
-    assert(strcmp(stdout_buffer.buf, "hello world")==0);
+    printf("");
+
+    /*
+     * print should print both string and integers when having mixed formatting flags
+     */
+    printf("Hello, %d\n", 123);
+
+    printf("%s, 123", "tom");
+
+    printf("%s, %d ", "hello", 123);
 
     /**
-     * printf should print unformatted text with formatted data
+     * printf should work for any number of arguments
      */
-    clear_buffer(&stdout_buffer, 1, 1);
-    printf("a=%d;", 10);
-    assert(strcmp(stdout_buffer.buf, "a=10;")==0);
+    printf("%d %d %d %d %d %d %d %d %d %d", 1 ,2,3,4,5,6,7,8,9,10);
 
-    /**
-     * printf should work with any number of arguments
-     */
-    clear_buffer(&stdout_buffer, 1, 1);
-    printf("%d,%d,%d,%d,%d,%d,%d,%d,%d",1,2,3,4,5,6,7,8,9);
-    assert(strcmp(stdout_buffer.buf, "1,2,3,4,5,6,7,8,9")==0);
 }
+void testPuts(){
 
+    puts("hello world");
+}
+void testExit(){
+    exit(10);
+}
+void testRead(){
+    char buf[21];
+    int received = 0;
+    received = read(stdin, buf, 20);
+    buf[received] = '\0';
+    puts(buf);
+}
+void testMath(){
+    int c = 32;
+    assert(absi(c) == c);
+
+    c = -32;
+    assert(absi(c)==(-c));
+}
+void testAssert(){
+    assert(0);
+    assert(3!=3);
+}
 void runTests(){
+
     testString();
     testPrintf();
+    testMath();
+    testAssert();
 }

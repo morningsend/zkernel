@@ -17,47 +17,40 @@ reset_handler:
 	orr r0, r0, #F_BIT
 	msr cpsr_c, r0
 	ldr sp, =irq_stack_base
+    stmfd sp!, {r0-r12, lr}
 
 	mov r0, #MODE_SUPERVISOR
 	orr r0, r0, #I_BIT
 	orr r0, r0, #F_BIT
 	msr cpsr, r0
 	ldr sp, =svc_stack_base
-
+    stmfd sp!, {r0-r12,lr}
     bl kernel_init
 
-    mov  r0, #0x10
-    msr  spsr, r0
+    mov  r0, #MODE_USER
+    msr  cpsr_c, r0
     ldr  sp, =user_stack_base
+    stmfd sp!, {r0-r12,lr}
 
-    ldr  lr, kernel_ready_address
-    movs pc, lr
-
-	b .
+    bl kernel_ready
+    b .
+	b kernel_shutdown
 
 undefined_handler:
 	b undefined_handler
 
 supervisor_call_handler:
-	sub   lr, lr, #0              @ correct return address
-	sub   sp, sp, #60             @ update SVC mode stack
-	stmia sp, { r0-r12, sp, lr }^ @ store  USR registers
-	mrs   r0, spsr                @ get    USR        CPSR
-	stmdb sp!, { r0, lr }         @ store  USR PC and CPSR
 
-	bl    kernel_syscall_dispatch @ invoke C function, system call number is passed as r7
-    mov   r8, r0
-    add   sp, sp, #8
-    ldmia sp, { r0-r6 }
-    ldr   lr, =exec_handler_end
-    mov   pc, r8
+    stmfd sp!, { r0-r12, lr }^ @ store  USR registers
+    mrs   r2, spsr                @ get    USR        CPSR
+    stmfd sp!, { r2, lr }         @ store  USR PC and CPSR
+    add r0, sp, #8
+    bl    kernel_syscall_dispatch      @ invoke C function
+    ldmfd sp!, { r2, lr }         @ load   USR mode PC and CPSR
+    msr   spsr, r2                @ set    USR mode        CPSR
+    ldmfd sp!, { r0-r12, lr }^ @ load   USR mode registers
 
-exec_handler_end:
-    sub   sp,sp,#8
-	ldmia sp!, { r0, lr }         @ load   USR mode PC and CPSR
-	msr   spsr, r0                @ set    USR mode        CPSR
-	ldmia sp, { r0-r12, sp, lr }^ @ load   USR mode registers
-	add   sp, sp, #60             @ update SVC mode SP
+svc_before_return:
 	movs  pc, lr                  @ return from interrupt
 
 prefetch_abort_handler:

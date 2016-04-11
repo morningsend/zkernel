@@ -34,7 +34,7 @@
 build       : ${PROJECT_TARGETS}
 
 launch-qemu :;
-	@${QEMU_PATH}/bin/qemu-system-arm -M realview-pb-a8 -m 128M -display none -gdb tcp:${QEMU_GDB} $(addprefix -serial , ${QEMU_UART}) -S -kernel kernel.bin
+	@${QEMU_PATH}/bin/qemu-system-arm -M realview-pb-a8 -m 128M -display none -gdb tcp:${QEMU_GDB} $(addprefix -serial , ${QEMU_UART}) -kernel kernel.bin
 
 launch-gdb  : ;
 	@${LINARO_PATH}/bin/${LINARO_PREFIX}-gdb -ex "file kernel.elf" -ex "target remote ${QEMU_GDB}"

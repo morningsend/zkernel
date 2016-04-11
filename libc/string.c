@@ -117,8 +117,15 @@ void strrevcpy(char *str, char * buf){
 void memcpy(void* destination, void* source, int size){
     char* pdest = (char*) destination;
     char* psource = (char*) source;
-    while(size>0){
-        *pdest++ = *psource++;
-        size--;
+    int i = size;
+    while(i >0){
+        *pdest= *psource;
+        pdest++;
+        psource++;
+        i--;
     }
+}
+
+int format_int_to_hex(int n, char* buf, int len){
+    return 0;
 }

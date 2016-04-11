@@ -29,7 +29,7 @@ int append_to_buffer(io_buffer* buffer, char* str, int size){
         return 0;
     }
     int free = BUF_SIZE - buffer->size;
-    int overflow = free - size;
+    int overflow = size - free;
     if(overflow > 0){
         size = free;
     }
@@ -39,4 +39,7 @@ int append_to_buffer(io_buffer* buffer, char* str, int size){
 }
 int is_buffer_full(io_buffer* buffer){
     return buffer->size==BUF_SIZE;
+}
+int is_buffer_empty(io_buffer* buffer){
+    return buffer->size <= 0;
 }

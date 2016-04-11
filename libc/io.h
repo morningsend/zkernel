@@ -17,12 +17,7 @@
 #define NULL ((void * )0)
 #endif
 
-
-
-
-
 void printf(const char* format, ...);
-
 
 void putchar(int c);
 int getchar();

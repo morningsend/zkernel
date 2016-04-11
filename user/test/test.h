@@ -4,10 +4,8 @@
 
 #ifndef _TEST_H
 #define _TEST_H
-#include <assert.h>
-#include "../string.h"
-#include "../io.h"
-
+#include "../../libc/assert.h"
+#include "../../libc/io.h"
 void runTests();
-
+void testPuts();
 #endif //_TEST_H

@@ -16,14 +16,14 @@ SECTIONS {
   /* align  address (per AAPCS)  */
   .       = ALIGN(8);        
   /* allocate stack for irq mode */
-  .       = . + 0x00001000;  
+  .       = . + 0x00004000;
   irq_stack_base = .;
 
   /* allocate stack for svc mode */
-  .	= . + 0x00001000;
+  .	= . + 0x00004000;
   svc_stack_base = .;
 
-  . = . + 0x00001000;
+  . = . + 0x00004000;
   user_stack_base = .;
 
   /* PROVIDE (end = .); */

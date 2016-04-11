@@ -16,5 +16,5 @@ void clear_buffer(io_buffer *buffer);
 int write_to_buffer(io_buffer* buffer, char* str, int size);
 int append_to_buffer(io_buffer* buffer, char* str, int size);
 int is_buffer_full(io_buffer* buffer);
-
+int is_buffer_empty(io_buffer* buffer);
 #endif //_IOBUFFER_H

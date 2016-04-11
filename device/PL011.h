@@ -66,14 +66,16 @@ extern PL011_t* const UART3;
 void    PL011_putc( PL011_t* d, uint8_t x );
 // recieve  raw      byte x via PL011 instance d
 uint32_t PL011_getc( PL011_t* d            );
-
+uint32_t PL011_getc_with_echo(PL011_t* input, PL011_t* echo);
 // transmit hexified byte x via PL011 instance d
 void    PL011_puth( PL011_t* d, uint8_t x );
 // recieve  hexified byte x via PL011 instance d
 uint8_t PL011_geth( PL011_t* d            );
 
-void PL011_put_bytes( PL011_t* d, const uint8_t* bytes, uint32_t size);
+uint32_t PL011_put_bytes( PL011_t* d, const uint8_t* bytes, uint32_t size);
 
-void PL011_puts( PL011_t* device, const char* bytes);
+uint32_t PL011_puts( PL011_t* device, const char* bytes);
 
+uint32_t PL011_get_bytes( PL011_t* d,  uint8_t* bytes, uint32_t size);
+uint32_t PL011_gets( PL011_t* d,  uint8_t* bytes, uint32_t size);
 #endif

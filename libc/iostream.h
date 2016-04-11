@@ -24,12 +24,20 @@ typedef struct io_stream_struct{
     int id;
     int type;
     int auto_flush;
+    int pos;
 } io_stream;
 
+typedef enum stream_seek_mode {
+    BEGIN, END, CURRENT
+}stream_seek_mode;
 
 void stream_flush(io_stream* stream);
 int stream_write(io_stream* stream, char* bytes, int size);
 int stream_read(io_stream* stream, char* buf, int size);
+int stream_pos_forward(io_stream* stream, stream_seek_mode mode, int offset);
+int stream_pos_rewind(io_stream* stream, stream_seek_mode mode, int offset);
+
+void stream_fill(io_stream* stream);
 extern const io_stream stdout_stream;
 extern const io_stream stdin_stream;
 extern const io_stream stderr_stream;

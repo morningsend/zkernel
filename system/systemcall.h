@@ -33,5 +33,5 @@
                                 :"r0", "r1", "r2", "r3"\
 );
 
-#define _SYS_CALL_GET_NUMBER(sysno) asm("mov %[id], r7\n":[id] "=r" (sysno)::);
+#define _SYS_CALL_GET_NUMBER(sysno) asm volatile("mov %[id], r7\n":[id] "=r" (sysno)::);
 #endif

@@ -16,12 +16,16 @@ void yield(){
 
 }
 
-int read(int stream, void* buffer, int size){
-
+int read(int stream, char* buffer, int size){
+    if(size > 0) {
+        _SYS_CALL_ARG_3(SYSCALL_Read, stream, buffer, size);
+    }
     return size;
 }
-int write(int stream, void* buffer, int size){
-    _SYS_CALL_ARG_3(SYSCALL_Write, stream, buffer, size);
+int write(int stream, char* buffer, int size){
+    if(size > 0){
+        _SYS_CALL_ARG_3(SYSCALL_Write, stream, buffer, size);
+    }
     return size;
 }
 
