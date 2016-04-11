@@ -34,13 +34,14 @@ int format_int(int x, char *buf, int n){
     }
     x = absi(x);
     n = n - negative - 1;
-    while(n > 0 && x > 0){
+
+    do{
         rem = x % 10;
         *buf = '0' + (char)rem;
         n--;
         buf++;
         x = x / 10;
-    }
+    }while(n > 0 && x > 0);
 
     if (negative){
         *buf = '-';

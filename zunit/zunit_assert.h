@@ -5,13 +5,13 @@
 #ifndef _ASSERT_H
 #define _ASSERT_H
 
-
+#include "test_case.h"
 #include "../libc/io.h"
 #include "../libc/string.h"
 //
 // Assertion Failed: Expect #condition to be True\False
 // Assertion Failed: Expect #expected and #actual to be equal
-#define assert_true(spec, condition) __assert_true( spec,#condition, condition, __LINE__, __FILE__ );
+#define assert_true(spec, condition) __assert_true( spec,#condition, (condition), __LINE__, __FILE__ );
 #define assert_false(spec, condition) __assert_false( spec, #condition, condition, __LINE__, __FILE__ );
 
 #define assert_string_equal(spec, expected, actual) __assert_string_equal(spec, expected, actual, __LINE__, __FILE__ );
@@ -27,7 +27,7 @@
 extern void test_case_assert_fail();
 extern void test_case_assert_pass();
 
-#ifdef _TEST_CASE_ASSERT_LINK
+#if defined(_TEST_CASE_ASSERT_LINK)
 #define _TEST_CASE_REPORT_RESULT(pass) if(pass){test_case_assert_pass();}else{test_case_assert_fail();}
 #else
 #define _TEST_CASE_REPORT_RESULT(condition)

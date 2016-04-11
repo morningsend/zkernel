@@ -24,7 +24,7 @@ typedef struct test_case_struct {
 
 void test_case_begin(char* description);
 void test_case_end();
-
+void test_case_summary();
 void test_case_assert_fail();
 void test_case_assert_pass();
 

@@ -156,6 +156,17 @@ void testAssert(){
     assert(3!=3);
 }
 
+void testTestCase(){
+    test_case_begin("Test case Spec");
+
+
+    assert_int_equal("1 should equal to 1", 1, 1);
+    assert_true("1 ==1 should be true", 1==1);
+
+    test_case_end();
+    test_case_summary();
+}
+
 void runTests(){
 
     testString();
@@ -163,4 +174,5 @@ void runTests(){
     testMath();
     testAssert();
     testPuts();
+    testTestCase();
 }
