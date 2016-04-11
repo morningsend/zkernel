@@ -16,7 +16,7 @@ void printf(const char* format, ...){
     unsigned int uiVal = 0;
     int length = 0;
     va_start(vars, format);
-
+    
     int skip = 0;
     while( *format != '\0' ){
         for(; *format!='\0' && *format!='%' ; format++) skip++;
