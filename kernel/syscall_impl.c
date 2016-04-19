@@ -25,7 +25,7 @@ int sys_read(int stream, char* buffer, unsigned int size){
 int sys_fork(){
     return 0;
 }
-void sys_execute(){
+void sys_execute(char* program_name){
 
 }
 void sys_yield(){

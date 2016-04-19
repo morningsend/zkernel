@@ -12,6 +12,7 @@ reset_handler:
     bl vector_table_relocate
 
 	/* go to svc, irq, etc., modes and set up stack */
+irq_setup:
 	mov r0, #MODE_IRQ
 	orr r0, r0, #I_BIT
 	orr r0, r0, #F_BIT
@@ -19,6 +20,7 @@ reset_handler:
 	ldr sp, =irq_stack_base
     stmfd sp!, {r0-r12, lr}
 
+svc_setup:
 	mov r0, #MODE_SUPERVISOR
 	orr r0, r0, #I_BIT
 	orr r0, r0, #F_BIT
@@ -27,7 +29,17 @@ reset_handler:
     stmfd sp!, {r0-r12,lr}
     bl kernel_init
 
+device_init:
+    mov r0, #MODE_IRQ
+    orr r0, r0, #I_BIT
+    orr r0, r0, #F_BIT
+    msr cpsr_c, r0
+    bl kernel_device_init
+
+user_setup:
     mov  r0, #MODE_USER
+    bic r0, r0, #F_BIT
+    bic r0, r0, #I_BIT
     msr  cpsr_c, r0
     ldr  sp, =user_stack_base
     stmfd sp!, {r0-r12,lr}
@@ -78,8 +90,8 @@ vector_table:
 	LDR pc, prefetch_abort_address
 	LDR pc, data_abort_address
 	b .
-	LDR pc, =irq_address
-	LDR pc, =fiq_address
+	LDR pc, irq_address
+	LDR pc, fiq_address
 
 reset_address: .word reset_handler
 undefined_address: .word undefined_handler

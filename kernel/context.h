@@ -4,11 +4,17 @@
 
 #ifndef _CONTEXT_H
 #define _CONTEXT_H
+#include <stddef.h>
+#include <stdint.h>
+#define GPREGISTER_COUNT 13
+typedef struct context_struct {
+    uint32_t registers[GPREGISTER_COUNT];
+    uint32_t stackPointer;
+    uint32_t programCounter;
+    uint32_t linkRegister;
+    uint32_t programState;
+} context;
 
-struct context_struct {
-
-}process_context;
-
-
-
+void init_context(context*);
+void context_clone(context* con1, context* cont2);
 #endif //_CONTEXT_H

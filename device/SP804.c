@@ -9,7 +9,9 @@
  * associated structure instance for each one.
  */
 
-SP804_t* const TIMER0 = ( SP804_t* )( 0x10011000 );
-SP804_t* const TIMER1 = ( SP804_t* )( 0x10012000 );
-SP804_t* const TIMER2 = ( SP804_t* )( 0x10018000 );
-SP804_t* const TIMER3 = ( SP804_t* )( 0x10019000 );
+SP804_t* const TIMERS[4] = {
+        ( SP804_t* )( 0x10011000 ),
+        ( SP804_t* )( 0x10012000 ),
+        ( SP804_t* )( 0x10018000 ),
+        ( SP804_t* )( 0x10019000 )
+};

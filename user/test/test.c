@@ -2,6 +2,7 @@
 // Created by zaiyangli on 4/2/16.
 //
 
+#include <stddef.h>
 #include "test.h"
 #include "../../libc/assert.h"
 #if !defined(assert)
@@ -132,7 +133,6 @@ void testPuts(){
     char m[] = "hello world\n";
     int written = puts(m);
     assert_int_equal("puts(str) returns strlen(str)", strlen(m), written);
-    assert_int_equal("puts(str) returns strlen(str)", strlen(m)-1, written);
 }
 void testExit(){
     exit(10);
@@ -162,11 +162,83 @@ void testTestCase(){
 
     assert_int_equal("1 should equal to 1", 1, 1);
     assert_true("1 ==1 should be true", 1==1);
+    assert_int_equal("sizeof(inti) should equal 4", 4, (int)sizeof(int));
+    test_case_end();
+    test_case_summary();
+}
+
+
+void testFreeList(){
+#define MEM_SIZE 128
+    char mem[MEM_SIZE];
+    test_case_begin("Free List Data Structure Test");
+    free_list list;
+    init_free_list(&list, mem, MEM_SIZE);
+    assert_int_equal("list should have size MEM_SIZE", MEM_SIZE, list.memory_size);
+    assert_long_equal("list should have memory location equal to mem", ((long) mem) ,((long) list.base_address ));
+    assert_true("list head/tail pointer is not null", (list.head != NULL) && (list.tail != NULL));
+
+    void* free_mem = free_list_node_shrink(&list, list.head, 64);
+    assert_true("after split, head will have address offset by 64", (list.base_address + 64) == list.head);
+    p_free_list_node node = create_free_list_node(free_mem,64);
+
+    free_list_insert_node_head(&list, node);
+    assert_false("memory after shrink is not null", free_mem == NULL);
+    assert_true("after inserting new node, head should point to new node", list.head == node);
+    assert_int_equal("block size of new node should equal to size after split", 64, node->block_size);
+
+    p_free_list_node found = free_list_find_block_of_size(&list, 20+sizeof(free_list_node));
+    assert_true("free_list will contain node of block size 20+sizeof(free_list_node)", list.head == found);
+
+    free_list_node_combine(&list, list.head, list.head->next);
+    assert_true("free_list combine nodes will create node with combined size", list.head->block_size == MEM_SIZE);
+    assert_true("after combine nodes, head will have address equal to mem", (void*)list.head ==(void*) mem);
 
     test_case_end();
     test_case_summary();
 }
 
+void testAllocator(){
+#define MEMSIZE2 256
+    char memory[MEMSIZE2];
+    allocator alloc;
+    init_alloc_with_pool(&alloc, memory, MEMSIZE2);
+    test_case_begin("Testing memory allocation and deallocation");
+
+    int* n = (int*) mem_alloc(&alloc, sizeof(int));
+    assert_false("allocating an integer returns address Not NULL", n ==NULL);
+    int* m = (int*) mem_alloc(&alloc, sizeof(int));
+    assert_false("allocating an integer returns address Not NULL", m ==NULL);
+    assert_false("m and n have different address", m ==n);
+    *m = 10;
+    p_alloc_entry entry = get_mem_alloc_entry((void*) n);
+    assert_int_equal("entry for n has size 16", 16, entry->block_size);
+    entry = get_mem_alloc_entry((void*) m);
+    assert_int_equal("entry for m has size 16", 16, entry->block_size);
+
+    mem_free(&alloc, m);
+    mem_free(&alloc, n);
+    assert_false("after deallocation, m is not 10", (int)m == 10);
+    test_case_end();
+    test_case_summary();
+}
+void testStressAllocator(){
+    char memory[MEMSIZE2];
+    allocator alloc;
+    init_alloc_with_pool(&alloc, memory, MEMSIZE2);
+    test_case_begin("Allocator Stress Testing");
+    char* str1 = (char*) mem_alloc(&alloc, 20);
+    strcpy(str1, "hello world");
+    char* str2 = (char*) mem_alloc(&alloc, 20);
+    strcpy(str2, "good day");
+    char* str3 = (char*) mem_alloc(&alloc, 60);
+    str3[0] = '\0';
+    strcpy(str3, str1);
+    strcat(str3, str2);
+    assert_true("str3 should equal to hello worldgoodday", strcmp(str3, "hello worldgoodday")==0);
+    test_case_end();
+    test_case_summary();
+}
 void runTests(){
 
     testString();
@@ -175,4 +247,7 @@ void runTests(){
     testAssert();
     testPuts();
     testTestCase();
+    testFreeList();
+    testAllocator();
+    testStressAllocator();
 }

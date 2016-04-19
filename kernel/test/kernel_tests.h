@@ -2,7 +2,11 @@
 // Created by zaiyangli on 4/18/16.
 //
 
-#ifndef APP1_KERNEL_TESTS_H
-#define APP1_KERNEL_TESTS_H
+#ifndef _KERNEL_TESTS_H
+#define _KERNEL_TESTS_H
+#include "../kernel.h"
+#include "../../zunit/zunit.h"
 
-#endif //APP1_KERNEL_TESTS_H
+void runKernelTests();
+
+#endif //_KERNEL_TESTS_H

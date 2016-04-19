@@ -130,3 +130,8 @@ void memcpy(void* destination, void* source, int size){
 int format_int_to_hex(int n, char* buf, int len){
     return 0;
 }
+
+void strcat(char* destination, char* source){
+    int len = strlen(destination);
+    memcpy(destination+len, source, strlen(source)+1);
+}

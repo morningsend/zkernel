@@ -3,3 +3,7 @@
 //
 
 #include "kernel_tests.h"
+
+void runKernelTests(){
+
+}

@@ -18,7 +18,7 @@
 #define assert_int_equal(spec, expected, actual) __assert_int_equal(spec, expected, actual, __LINE__, __FILE__ );
 #define assert_float_equal(spec, expected, actual) __assert_float_equal(spec, expected, actual, __LINE__, __FILE__ );
 #define assert_double_equal(spec, expected, actual) __assert_double_equal(spec, expected, actual, __LINE__, __FILE__ );
-#define assert_long_equal(spec, expected, actual) __assert_long_equal(spec, exptected, actual, __LINE__, __FILE__ );
+#define assert_long_equal(spec, expected, actual) __assert_long_equal(spec, expected, actual, __LINE__, __FILE__ );
 
 #define assert_array_equal(spec, expected, actual, expected_size, actual_size, element_size, cmp) \
     __assert_array_equal(spec, expected, actual,expected_size, actual_size,element_size, cmp, __LINE__, __FILE__ );

@@ -23,6 +23,13 @@
  */
 
 #define RSVD(x,y,z) uint8_t reserved##x[ z - y + 1 ];
+#define SP804_TIMER_MODE_BIT (0x1 << 6)
+#define SP804_TIMER_ENABLE_BIT (0x1 << 7)
+#define SP804_TIMER_INTERRUPT_ENABLE_BIT (0x1 << 5)
+#define SP804_TIMER_RESERVED_BIT (0x1 << 4)
+#define SP804_TIMER_PRESCALE_BIT (0x11 << 1)
+#define SP804_TIMER_SIZE_BIT (0x1 << 1)
+#define SP804_TIMER_ONE_SHOT (0x1 << 0)
 
 typedef volatile struct {
   uint32_t Timer1Load;       // base+0x0000          :            load
@@ -58,9 +65,8 @@ typedef volatile struct {
  * translate each variable name, i.e., a timer module, to a given timer.
  */
 
-extern SP804_t* const TIMER0; // timer module 0 -> timers #0 and #1
-extern SP804_t* const TIMER1; // timer module 1 -> timers #2 and #3
-extern SP804_t* const TIMER2; // timer module 2 -> timers #4 and #5
-extern SP804_t* const TIMER3; // timer module 3 -> timers #6 and #7
+extern SP804_t* const TIMERS[4];
+
+
 
 #endif

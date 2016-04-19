@@ -22,6 +22,10 @@ SECTIONS {
   /* allocate stack for svc mode */
   .	= . + 0x00004000;
   svc_stack_base = .;
+  kernel_heap_size = 4M;
+  . += 0x1000;
+  kernel_heap_base = .;
+  . += kernel_heap_size;
 
   . = . + 0x00004000;
   user_stack_base = .;

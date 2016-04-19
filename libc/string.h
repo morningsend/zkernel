@@ -17,6 +17,8 @@ int strlen(const char* str);
 
 int strcmp(const char* string1, const char* string2);
 
+void strcat(char* buffer, char* source);
+
 int format_int(int n, char *buf, int len);
 int format_int_to_hex(int n, char* buf, int len);
 int format_float(float n, char *buf, int len);

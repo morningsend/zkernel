@@ -1,42 +1,65 @@
 #include "kernel.h"
+#define MULTITASKING 0
+#define KERNEL_TESTING 1
 
+#ifdef KERNEL_TESTING
+#include "test/kernel_tests.h"
+#endif
 
+static int timer_id;
 
 void kernel_init(){
     PL011_puts(UART0, "kernel starting\n");
-	TIMER0->Timer1Load     = 0x00080000; 
-	TIMER0->Timer1Ctrl     = 0x00000042; 
-	TIMER0->Timer1Ctrl    |= 0x000000A0; 
-
-	GICC0->PMR             = 0x000000F0; 
-	GICD0->ISENABLER[ 1 ] |= 0x00000001;
-	GICC0->CTLR            = 0x00000001;
-	GICD0->CTLR            = 0x00000001;
-
-    system_init();
-    enable_irq_interrupt();
-    enable_fiq_interrupt();
+    init_pcb();
+    init_scheduler();
+#ifdef KERNEL_TESTING
+    runKernelTests();
+#endif
 }
 
+void kernel_device_init(){
+    if(MULTITASKING == 1) {
+        timer_id = request_timer_device();
+        timer_set_ticks(timer_id, 0x4000);
+        timer_set_periodic_mode(timer_id);
+        timer_enable_interrupt(timer_id);
+        timer_set_size_32bit(timer_id);
+        timer_enable(timer_id);
 
-void kernel_irq_handler() {
-    // Step 2: read  the interrupt identifier so we know the source.
+        GICC0->PMR             = 0x000000F0; // unmask all            interrupts
+        GICD0->ISENABLER[ 1 ] |= 0x00000010; // enable timer          interrupt
+        GICC0->CTLR            = 0x00000001; // enable GIC interface
+        GICD0->CTLR            = 0x00000001;
 
-    uint32_t id = GICC0->IAR;
-
-    // Step 4: handle the interrupt, then clear (or reset) the source.
-
-    if( id == GIC_SOURCE_TIMER0 ) {
-        PL011_putc( UART0, 'T' );
-        TIMER0->Timer1IntClr = 0x01;
+        enable_irq_interrupt();
     }
 
-    // Step 5: write the interrupt identifier to signal we're done.
+}
+void kernel_scheduler_switch_context(){
+    PL011_putc( UART0, 'T' );
+    timer_clear_interrupt(timer_id);
+}
+void kernel_irq_handler() {
+    // Step 2: read  the interrupt identifier so we know the source.
+    uint32_t id = GICC0->IAR;
+    disable_irq_interrupt();
+    // Step 4: handle the interrupt, then clear (or reset) the source.
+    switch(id){
+        case GIC_SOURCE_TIMER0:
+            kernel_scheduler_switch_context();
+            break;
+        case GIC_SOURCE_TIMER1:
+            break;
+        default:
+            break;
+    }
 
     GICC0->EOIR = id;
+    enable_irq_interrupt();
 }
 
 void kernel_syscall_dispatch(unsigned int args[]){
+    disable_irq_interrupt();
     uint32_t syscall_number = args[7];
     void* arg1 = (void *)args[0];
     void* arg2 = (void *)args[1];
@@ -53,11 +76,21 @@ void kernel_syscall_dispatch(unsigned int args[]){
         case SYSCALL_Read:
             return_val = sys_read((int) arg1,(char*) arg2,(unsigned int)arg3);
             break;
+        case SYSCALL_Yield:
+            sys_yield();
+            break;
+        case SYSCALL_Execute:
+            sys_execute((char*) arg1);
+            break;
+        case SYSCALL_Fork:
+            return_val = sys_fork();
+            break;
         default:
             syscall_def_handler(syscall_number);
             break;
     }
     args[0] = return_val;
+    enable_irq_interrupt();
 }
 
 void kernel_ready(){
