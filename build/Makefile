@@ -42,8 +42,10 @@ debug :;
 
 
 gdb  : ;
-	@${LINARO_PATH}/bin/${LINARO_PREFIX}-gdb -ex "file kernel.elf" -ex "target remote ${QEMU_GDB}"
+	@${LINARO_PATH}/bin/${LINARO_PREFIX}-gdb -ex "file kernel.elf" -ex "target remote ${QEMU_GDB}" 
 
+ddd :  ;
+	ddd --debugger ${LINARO_PATH}/bin/${LINARO_PREFIX}-gdb --symbols kernel.elf --eval-command="target remote ${QEMU_GDB}"
 kill-qemu   :
 	@-killall --quiet --user ${USER} qemu-system-arm
 
