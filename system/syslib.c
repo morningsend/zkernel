@@ -13,7 +13,7 @@ int fork(){
 }
 
 void yield(){
-
+    _SYS_CALL_(SYSCALL_Yield);
 }
 
 int read(int stream, char* buffer, int size){
@@ -29,6 +29,6 @@ int write(int stream, char* buffer, int size){
     return size;
 }
 
-void execute(const char* program){
+void execute(void (*program)()){
     return;
 }

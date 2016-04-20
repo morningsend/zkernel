@@ -41,7 +41,8 @@ void* array_delete(array* arr, int index);
 void array_for_each(array* arr, void(*func)(void*));
 int array_is_full(array* arr);
 int array_is_empty(array* arr);
-
+int array_find_element(array* arr, void* object);
 void array_new(array* arr, allocator* alloc, uint32_t init_capacity);
-
+void array_destroy(array* arr);
+void* array_delete_element(array* arr, void* object);
 #endif //_ARRAY_H

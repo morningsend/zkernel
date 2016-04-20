@@ -9,7 +9,7 @@
 #include "systemcall.h"
 
 
-void execute(const char* program);
+void execute(void(*program)());
 void exit(int code);
 int fork();
 void yield();

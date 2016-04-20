@@ -77,13 +77,16 @@ data_abort_handler:
 	b data_abort_handler
 
 irq_handler:
-	sub   lr, lr, #4              @ correct return address
-	stmfd sp!, { r0-r3, ip, lr }  @ save    caller-save registers
-
-	bl    kernel_irq_handler      @ invoke C function
-
-	ldmfd sp!, { r0-r3, ip, lr }  @ restore caller-save registers
-	movs  pc, lr                  @ return from interrupt
+    sub lr, lr, #4
+    stmfd sp!, { r0-r12, sp, lr }^ @ store  USR registers
+    mrs   r2, spsr                @ get    USR        CPSR
+    stmfd sp!, { r2, lr }         @ store  USR PC and CPSR
+    mov r0, sp
+    bl    kernel_irq_handler      @ invoke C function
+    ldmfd sp!, { r2, lr }        @ load   USR mode PC and CPSR
+    msr   spsr, r2                @ set    USR mode        CPSR
+    ldmfd sp!, { r0-r12, sp, lr }^ @ load   USR mode registers
+    movs  pc, lr
 
 fiq_handler:
 	b fiq_handler
@@ -166,7 +169,7 @@ thread_context_init:
 
     mov sp, r5
     mov lr, r7
-    stmfd sp!, { lr }^
+    stmfd sp!, { lr }
 
     msr spsr, #MODE_USER
     movs pc, r6

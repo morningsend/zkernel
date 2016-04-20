@@ -116,9 +116,19 @@ void strrevcpy(char *str, char * buf){
 }
 
 void memcpy(void* destination, void* source, int size){
-    char* pdest = (char*) destination;
-    char* psource = (char*) source;
-    int i = size;
+    int*  u_dest = (int*) destination;
+    int* u_source = (int*) source;
+
+    int size_int = size / (sizeof(int));
+    int remainder = size % (sizeof(int));
+
+    for(int i = 0; i < size_int; i++, u_source++, u_dest++){
+        *u_dest = *u_source;
+    }
+
+    char* pdest = (char*) u_dest;
+    char* psource = (char*) u_source;
+    int i = remainder;
     while(i >0){
         *pdest= *psource;
         pdest++;

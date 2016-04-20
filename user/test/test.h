@@ -10,5 +10,5 @@
 #include "../../libc/allocator.h"
 #include "../../libc/free_list.h"
 void runTests();
-void testPuts();
+
 #endif //_TEST_H

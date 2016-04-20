@@ -15,6 +15,7 @@ extern void* kernel_heap_base;
 extern void* kernel_heap_size;
 extern void* user_heap_size;
 extern void* user_heap_base;
+extern p_context current_thread_context;
 void kernel_init();
 void kernel_shutdown();
 extern void enable_irq_interrupt();
@@ -25,4 +26,10 @@ void kernel_syscall_dispatch(context* exec_context);
 void kernel_main_loop();
 void kernel_ready();
 void kernel_scheduler_switch_context();
+
+
+
+p_context kernel_get_thread_context();
+void kernel_set_thread_context(p_context p);
+
 #endif

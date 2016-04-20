@@ -13,13 +13,15 @@ void thread_exit(void){
 }
 void thread_create(p_thread th,uint32_t priority, void* stack_base, uint32_t stack_size, void (*entry_point)() ){
     th->priority = priority;
-    th->pid = next_thread_id;
+    th->id = next_thread_id;
+    th->parent_id = 0;
     th->stack_base = stack_base;
     th->stack_size = stack_size;
     th->entry = entry_point;
+    th->exit_code = 0;
+    th->state = THREAD_STATE_NEW;
     next_thread_id ++;
 }
-
 void thread_create_default_context(p_thread th){
     memset(& th->ctx, sizeof(context), 0);
 }
@@ -29,37 +31,35 @@ void thread_save_context(p_thread th, p_context current){
 void thread_dispatch(p_thread th){
     if(th->entry == NULL) return;
     uint32_t program_state = MODE_USER;
+    switch(th->state){
+        case THREAD_STATE_NEW:
+            th->state = THREAD_STATE_RUNNING;
+            asm(
+            "mov r5, %[stack_base]\n"
+                    "mov r6, %[entry]\n"
+                    "mov r7, %[finish]\n"
+                    "b thread_context_init"
+            ::[stack_base] "r" (th->stack_base), [entry] "r" (th->entry), [finish] "r" (thread_exit)
+            : "r5", "r6", "r7"
+            );
+            break;
+        case THREAD_STATE_READY:
+            th->state = THREAD_STATE_RUNNING;
+            asm(
+                "nop"
+            );
+        case THREAD_STATE_SUSPENDED:
 
-    asm(
-    "mov r5, %[stack_base]\n"
-    "mov r6, %[entry]\n"
-    "mov r7, %[finish]\n"
-    "b thread_context_init"
-    ::[stack_base] "r" (th->stack_base), [entry] "r" (th->entry), [finish] "r" (thread_exit)
-    : "r5", "r6", "r7"
-    );/*
-    asm(
-        "mov r0,#0x1F\n"
-        "orr r0,r0, #0x80\n"
-        "orr r0,r0, #0x40\n"
-        "msr cpsr_c, r0\n"
-        "mov sp, %[stack_base]\n"
-        "mov lr, %[end]\n"
-        "stmfd sp!, {lr}\n"
-        "mov r0, %[entry]\n"
-        "mov r1, %[program_state]\n"
-        "msr spsr, r1\n"
-        "movs pc, r0\n"
-        :
-        :[stack_base] "r" (th->stack_base),[entry] "r" (th->entry), [program_state] "r" (program_state),[end] "r" (thread_exit)
-        :"r0", "r1"
-    );*/
-
-
+            break;
+        case THREAD_STATE_WAITING:
+            break;
+        default:
+            break;
+    }
 }
 
 void thread_suspend(p_thread th){
-
+    th->state = THREAD_STATE_SUSPENDED;
 }
 void thread_destroy(p_thread th){
 

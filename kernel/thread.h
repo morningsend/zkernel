@@ -16,15 +16,24 @@
 #define PRIORITY_NORMAL 0x2
 #define PRIORITY_LOW 0x1
 
+#define THREAD_STATE_SUSPENDED 0x02
+#define THREAD_STATE_WAITING 0x03
+#define THREAD_STATE_READY 0x04
+#define THREAD_STATE_NEW 0x05
+#define THREAD_STATE_RUNNING 0x01
+
 #define THREAD_STACK_SIZE 0x400
 
 typedef struct thread_struct{
-    uint32_t pid;
+    uint32_t id;
+    uint32_t parent_id;
     context ctx;
     uint32_t priority;
     void* stack_base;
     uint32_t stack_size;
+    uint32_t state;
     void (*entry) ();
+    int exit_code;
 }thread;
 
 typedef struct thread_struct* p_thread;

@@ -5,4 +5,4 @@
 #ifndef _HEAP_H
 #define _HEAP_H
 
-#endif //EAP_H
+#endif //_HEAP_H

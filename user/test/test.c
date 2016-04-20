@@ -242,13 +242,40 @@ void testStressAllocator(){
     test_case_summary();
 }
 void testArray(){
-    char memory[1024];
+    char memory[256];
+    int numbers[17] = {1,2,3,4,5,6,7,8,9,0,11,12,13,14,15,16,17};
     allocator alloc;
     init_alloc_with_pool(&alloc, memory, MEMSIZE2);
     array arr;
     array_new(&arr, &alloc, 16);
+    test_case_begin("Dynamic array test cases");
+
+    assert_int_equal("new array should have size 0", 0, arr.size );
+    assert_int_equal("new array should have capacity 16", 16, arr.capacity);
+
+    array_push(&arr, &numbers[0]);
+    assert_int_equal("array should have size 1 after pushing", 1, arr.size );
+    assert_int_equal("array capacity should be the same as before", 16, arr.capacity);
+
+    int* p = (int*) array_pop(&arr);
+    assert_true("popping array should get back the same value", *p == numbers[0]);
+    assert_true("popping should decrease array size by 1", arr.size == 0);
 
 
+    for(int i = 0; i < 17; i++){
+        array_push(&arr, &numbers[i]);
+    }
+
+    assert_true("array should grow after exceeding capacity", arr.capacity == 16*ARRAY_GROWTH_FACTOR);
+    int n = 100;
+    array_insert(&arr, 2, &n);
+    assert_int_equal("array insert at index", 100, *(int*)array_get(&arr, 2));
+
+    array_delete(&arr, 2);
+    assert_false("array delete index removes the element", array_get(&arr, 2) == &n);
+
+    test_case_end();
+    test_case_summary();
 }
 void runTests(){
 
@@ -261,4 +288,12 @@ void runTests(){
     testFreeList();
     testAllocator();
     testStressAllocator();
+    testArray();
+    int n = 10;
+    while(1){
+        puts("tick, ");
+        for(int i = 0; i < 10000000; i++){
+            asm volatile("nop");
+        }
+    }
 }
