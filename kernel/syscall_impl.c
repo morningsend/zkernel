@@ -10,6 +10,7 @@ void syscall_def_handler(int syscall_number){
 }
 void sys_exit(int code){
     PL011_puts(UART0, "inside sys_exit");
+    asm("b kernel_idle");
 }
 int sys_write(int stream, char* bytes, unsigned int size){
     if(stream==0){

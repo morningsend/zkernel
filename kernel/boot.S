@@ -1,10 +1,10 @@
 /*We define cpu mode constants*/
-#include "boot.h"
+#include "arm.h"
 
 
 
 .global reset_handler
-
+.global kernel_idle
 reset_handler:
 	@LDR r0, =vector_table
 	@MCR p15, 0, r0, c12, c0, 0 /* Set vector base address register to address of vector table*/
@@ -29,6 +29,14 @@ svc_setup:
     stmfd sp!, {r0-r12,lr}
     bl kernel_init
 
+system_setup:
+    mov r0, #MODE_SYS
+    orr r0, r0, #I_BIT
+    orr r0, r0, #F_BIT
+    msr cpsr_c, r0
+    ldr sp, =sys_stack_base
+    stmfd sp!, {r0-r12, lr}
+
 device_init:
     mov r0, #MODE_IRQ
     orr r0, r0, #I_BIT
@@ -36,31 +44,28 @@ device_init:
     msr cpsr_c, r0
     bl kernel_device_init
 
-user_setup:
-    mov  r0, #MODE_USER
-    bic r0, r0, #F_BIT
-    bic r0, r0, #I_BIT
-    msr  cpsr_c, r0
-    ldr  sp, =user_stack_base
-    stmfd sp!, {r0-r12,lr}
-
+kernel_init_finish:
+    mov r0, #MODE_SUPERVISOR
     bl kernel_ready
-    b .
+
+kernel_idle:
+    b kernel_idle
+
 	b kernel_shutdown
 
 undefined_handler:
 	b undefined_handler
 
 supervisor_call_handler:
-
-    stmfd sp!, { r0-r12, lr }^ @ store  USR registers
+    sub lr, lr, #0
+    stmfd sp!, { r0-r12, sp, lr }^ @ store  USR registers
     mrs   r2, spsr                @ get    USR        CPSR
     stmfd sp!, { r2, lr }         @ store  USR PC and CPSR
-    add r0, sp, #8
+    mov r0, sp
     bl    kernel_syscall_dispatch      @ invoke C function
     ldmfd sp!, { r2, lr }         @ load   USR mode PC and CPSR
     msr   spsr, r2                @ set    USR mode        CPSR
-    ldmfd sp!, { r0-r12, lr }^ @ load   USR mode registers
+    ldmfd sp!, { r0-r12, sp, lr }^ @ load   USR mode registers
 
 svc_before_return:
 	movs  pc, lr                  @ return from interrupt
@@ -125,6 +130,7 @@ vec_reloc_loop:
 .global disable_irq_interrupt
 .global enable_fiq_interrupt
 .global disable_fiq_interrupt
+.global thread_context_init
 
 enable_irq_interrupt:
 	mrs r0, cpsr
@@ -150,12 +156,24 @@ disable_fiq_interrupt:
 	msr cpsr_c, r0
 	mov pc, lr
 
+thread_context_init:
+    stmfd sp!, {r0-r3,lr}
 
-/* Interrupt handlers */
-/* unimplemented handlers will branch to itself causing a halt */
+    mov r0,#0x1F
+    orr r0,r0, #0x80
+    orr r0,r0, #0x40
+    msr cpsr_c, r0
 
+    mov sp, r5
+    mov lr, r7
+    stmfd sp!, { lr }^
 
-/* The reset handler is the first code that runs when CPU boots up
- * We need to initialize the stack pointers, invalidate cache and
- * setup MMU and branch to C code which containers kernel initialization code.
- */
+    msr spsr, #MODE_USER
+    movs pc, r6
+
+    mov r0, #0
+    mov r6, #1
+    svc #0
+
+    ldmfd sp!, {r0-r3,pc}
+

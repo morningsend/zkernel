@@ -5,13 +5,27 @@
 #include "array.h"
 #include "string.h"
 #include <stddef.h>
-void array_new(array* arr){
-    arr->capacity = ARRAY_CAPACITY;
+#define ELEMENT_SIZE sizeof(void*)
+static void array_expand(array* arr){
+    uint32_t new_capacity = arr->capacity * ARRAY_GROWTH_FACTOR;
+    void* memory = mem_alloc(arr->alloc, ELEMENT_SIZE * new_capacity);
+    if(memory != NULL){
+        memset(memory, ELEMENT_SIZE*arr->capacity,0);
+        memcpy(memory, arr->objects, ELEMENT_SIZE * arr->size);
+        mem_free(arr->alloc, arr->objects);
+        arr->objects = memory;
+    }
+}
+
+void array_new(array* arr, allocator* alloc, uint32_t init_capacity){
+    init_capacity = (init_capacity % 2 )== 0? init_capacity: (init_capacity + 1);
+    arr->capacity = init_capacity < ARRAY_DEFAULT_CAPACITY ? ARRAY_DEFAULT_CAPACITY : init_capacity;
     arr->size = 0;
+    arr->objects = mem_alloc(alloc, sizeof(void*) * arr->capacity);
     memset(arr->objects, sizeof(void*) * arr->capacity, 0);
 }
 void array_push(array* arr, void* element){
-    CHECK_BOUNDS(arr->size+1, 0,ARRAY_CAPACITY);
+    if(array_is_full(arr)) array_expand(arr);
     arr->objects[arr->size++] = element;
 }
 void* array_pop(array* arr){
@@ -25,7 +39,7 @@ void* array_first_element(array* arr){
     else return NULL;
 }
 void* array_last_elelment(array* arr){
-    if(arr->size > 0)
+    if(!array_is_empty(arr))
         return arr->objects[arr->size-1];
     else
         return NULL;
@@ -50,9 +64,9 @@ void* array_shift(array* arr){
 }
 void array_insert(array* arr, int index, void* element ){
     CHECK_BOUNDS(index, 0, arr->size);
-    if(array_is_full(arr)) return;
+    if(array_is_full(arr)) array_expand(arr);
 
-    for(int i = arr->size=1; i > index; i ++){
+    for(int i =(int) arr->size - 1; i > index; i ++){
         arr->objects[i] = arr->objects[i-1];
     }
     arr->size ++;
@@ -80,8 +94,14 @@ void array_for_each(array* arr, void(*func)(void*)){
     }
 }
 
+void* array_get(array* arr, int index){
+
+}
+void array_set(array* arr, int index, void* element){
+    
+}
 int array_is_full(array* arr){
-    return arr->size < arr->capacity;
+    return arr->size >= arr->capacity;
 }
 int array_is_empty(array* arr){
     return arr->size <= 0;

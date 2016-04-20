@@ -5,6 +5,8 @@
 #include <stddef.h>
 #include "test.h"
 #include "../../libc/assert.h"
+#include "../../libc/array.h"
+
 #if !defined(assert)
 #define assert(cond) ""
 #endif
@@ -212,9 +214,9 @@ void testAllocator(){
     assert_false("m and n have different address", m ==n);
     *m = 10;
     p_alloc_entry entry = get_mem_alloc_entry((void*) n);
-    assert_int_equal("entry for n has size 16", 16, entry->block_size);
+    assert_int_equal("entry for n has size 12", sizeof(free_list_node), entry->block_size);
     entry = get_mem_alloc_entry((void*) m);
-    assert_int_equal("entry for m has size 16", 16, entry->block_size);
+    assert_int_equal("entry for m has size 12", sizeof(free_list_node), entry->block_size);
 
     mem_free(&alloc, m);
     mem_free(&alloc, n);
@@ -235,9 +237,18 @@ void testStressAllocator(){
     str3[0] = '\0';
     strcpy(str3, str1);
     strcat(str3, str2);
-    assert_true("str3 should equal to hello worldgoodday", strcmp(str3, "hello worldgoodday")==0);
+    assert_true("str3 should equal to hello worldgood day", strcmp(str3, "hello worldgood day")==0);
     test_case_end();
     test_case_summary();
+}
+void testArray(){
+    char memory[1024];
+    allocator alloc;
+    init_alloc_with_pool(&alloc, memory, MEMSIZE2);
+    array arr;
+    array_new(&arr, &alloc, 16);
+
+
 }
 void runTests(){
 
