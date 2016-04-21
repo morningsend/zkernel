@@ -11,8 +11,6 @@ static allocator kernel_allocator;
 static allocator user_allocator;
 static thread user_thread;
 static scheduler_t thread_scheduler;
-context system_context;
-p_context current_thread_context = &system_context;
 
 p_thread create_thread(){
     p_thread th = mem_alloc(&kernel_allocator, sizeof(thread));
@@ -119,6 +117,7 @@ void kernel_syscall_dispatch(context* exec_context){
     int return_val = 0;
     switch(syscall_number){
         case SYSCALL_Exit:
+
             th = scheduler_kill_current_thread(&thread_scheduler);
             destroy_thread(th);
             scheduler_update(&thread_scheduler);
@@ -158,7 +157,7 @@ void kernel_ready(){
     scheduler_schedule_thread(&thread_scheduler, th);
     //..add some more threads to run
     scheduler_update(&thread_scheduler);
-    th = scheduler_next_thread(&thread_scheduler);
+    th = scheduler_get_current_thread(&thread_scheduler);
     if(th != NULL) {
         thread_dispatch(th);
     }
@@ -167,14 +166,4 @@ void kernel_ready(){
 
 void kernel_shutdown(){
     PL011_puts(UART0,"kernel shutdown\n");
-}
-
-p_context kernel_get_thread_context(){
-    return current_thread_context;
-}
-void kernel_set_thread_context(p_context p){
-    memcpy(current_thread_context, p, sizeof(context));
-}
-void kernel_load_thread_context_cpu(){
-
 }

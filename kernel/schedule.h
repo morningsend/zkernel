@@ -4,16 +4,18 @@
 
 #ifndef _SCHEDULE_H
 #define _SCHEDULE_H
+
 #include "thread.h"
 #include "../libc/array.h"
 #include "../libc/allocator.h"
 #include "kernel.h"
+#include "../libc/circular_queue.h"
 
 typedef struct scheduler_struct scheduler_t;
 struct scheduler_struct {
     allocator* mem_allocator;
     array threads;
-    int current_executing;
+    circ_queue thread_queue;
 };
 
 void init_scheduler(scheduler_t* scheduler, allocator *allocator1);
@@ -23,4 +25,6 @@ p_thread scheduler_next_thread(scheduler_t* scheduler);
 p_thread scheduler_get_current_thread(scheduler_t* scheduler);
 p_thread scheduler_kill_current_thread(scheduler_t*);
 void scheduler_update(scheduler_t* sch);
+
+void scheduler_destroy(scheduler_t* sched);
 #endif //_SCHEDULE_H

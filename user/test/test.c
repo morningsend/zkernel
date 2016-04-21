@@ -277,6 +277,49 @@ void testArray(){
     test_case_end();
     test_case_summary();
 }
+void print_number(void* p_int){
+    printf("%d\n", *(int*)p_int);
+}
+void testCircQueue(){
+    char memory[256];
+    allocator al;
+    init_alloc_with_pool(&al, memory, 256);
+    circ_queue queue;
+    circ_queue_create(&queue, &al);
+
+    int a=5,b=20,c=10;
+
+    test_case_begin("Circular Queue Tests");
+
+    assert_true("new queue have NULL top and bottom pointers",
+                queue.top == NULL && queue.bottom == NULL);
+
+    circ_queue_enque(&queue, &a);
+
+    assert_true("both top and bottom will point to same node if 1 element in queue",
+                queue.top == queue.bottom);
+    assert_true("node's next pointer will point to itself", queue.top->next == queue.top);
+    circ_queue_enque(&queue, &b);
+    circ_queue_enque(&queue, &c);
+
+    assert_int_equal("top of the queue is a", a, *(int*)queue.top->object);
+
+    assert_int_equal("bottom of the queue is c", c, *(int*)queue.bottom->object);
+    int n = *(int*)circ_queue_deque(&queue);
+    assert_int_equal("deque will return first object in queue", a, n);
+    n = *(int*) circ_queue_deque(&queue);
+
+    assert_int_equal("dequeue second time will return b", b, n);
+
+    assert_int_equal("backing array should have size equal to number of nodes",2, queue.nodes.size);
+    circ_queue_enque(&queue, &a);
+    assert_int_equal("mem cache array should decrease by 1 when create a new node,", 1, queue.nodes.size);
+
+    circ_queue_for_each(&queue, print_number);
+
+    test_case_end();
+    test_case_summary();
+}
 void runTests(){
 
     testString();
@@ -289,4 +332,6 @@ void runTests(){
     testAllocator();
     testStressAllocator();
     testArray();
+    testCircQueue();
+    exit(0);
 }

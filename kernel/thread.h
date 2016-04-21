@@ -16,6 +16,10 @@
 #define PRIORITY_NORMAL 0x2
 #define PRIORITY_LOW 0x1
 
+#define PRIORITY_LOW_CPU_TIME 1
+#define PRIORITY_NORMAL_CPU_TIME 3
+#define PRIORITY_HIGH_CPU_TIME 5
+
 #define THREAD_STATE_SUSPENDED 0x02
 #define THREAD_STATE_WAITING 0x03
 #define THREAD_STATE_READY 0x04
@@ -34,6 +38,7 @@ typedef struct thread_struct{
     uint32_t state;
     void (*entry) ();
     int exit_code;
+    uint32_t cpu_time;
 }thread;
 
 typedef struct thread_struct* p_thread;
@@ -50,5 +55,7 @@ void thread_fork(p_thread parent, p_thread child, void* stack);
 
 void thread_exit(void);
 void thread_load_init_context(p_thread th);
+
+uint32_t thread_get_cpu_time(uint32_t priority);
 extern void thread_context_init();
 #endif //_PROCESS_H

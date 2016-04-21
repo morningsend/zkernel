@@ -20,6 +20,7 @@ void thread_create(p_thread th,uint32_t priority, void* stack_base, uint32_t sta
     th->entry = entry_point;
     th->exit_code = 0;
     th->state = THREAD_STATE_NEW;
+    th->cpu_time = 1;
     next_thread_id ++;
 }
 void thread_create_default_context(p_thread th){
@@ -81,9 +82,27 @@ void thread_fork(p_thread parent, p_thread child, void* stack){
 
 void thread_load_init_context(p_thread th){
     memset(&th->ctx, sizeof(context),0);
-    th->ctx.stackPointer = th->stack_base;
+    th->ctx.stackPointer = (uint32_t ) th->stack_base;
     th->ctx.programState = MODE_USER;
-    th->ctx.linkRegister = th->entry;
-    th->state = THREAD_STATE_READY;
-    th->ctx.programCounter = th->entry;
+    th->ctx.linkRegister = (uint32_t ) th->entry;
+    th->state = THREAD_STATE_NEW;
+    th->ctx.programCounter = (uint32_t ) th->entry;
+}
+uint32_t thread_get_cpu_time(uint32_t priority){
+    uint32_t cpu_time = 0;
+    switch(priority){
+        case PRIORITY_LOW:
+            cpu_time = PRIORITY_LOW_CPU_TIME;
+            break;
+        case PRIORITY_NORMAL:
+            cpu_time = PRIORITY_NORMAL_CPU_TIME;
+            break;
+        case PRIORITY_HIGH:
+            cpu_time = PRIORITY_HIGH_CPU_TIME;
+            break;
+
+        default:
+            cpu_time = PRIORITY_NORMAL_CPU_TIME;
+    }
+    return cpu_time;
 }
