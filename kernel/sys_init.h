@@ -11,4 +11,5 @@
 
 void system_init();
 void user_init();
+void user_idle();
 #endif //_SYS_INIT_H

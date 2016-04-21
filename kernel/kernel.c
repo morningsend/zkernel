@@ -23,7 +23,7 @@ p_thread create_thread(){
 p_thread create_idle_thread(){
     p_thread th = mem_alloc(&kernel_allocator, sizeof(thread));
     void* stack = mem_alloc(&user_allocator, THREAD_STACK_SIZE);
-    thread_create(th, PRIORITY_LOW, stack+THREAD_STACK_SIZE, THREAD_STACK_SIZE, user_init);
+    thread_create(th, PRIORITY_LOW, stack+THREAD_STACK_SIZE, THREAD_STACK_SIZE, user_idle);
     thread_load_init_context(th);
     return th;
 }
@@ -121,7 +121,10 @@ void kernel_syscall_dispatch(context* exec_context){
         case SYSCALL_Exit:
             th = scheduler_kill_current_thread(&thread_scheduler);
             destroy_thread(th);
-            kernel_switch_context(exec_context);
+            scheduler_update(&thread_scheduler);
+            th = scheduler_next_thread(&thread_scheduler);
+            memcpy(exec_context, &th->ctx, sizeof(context));
+            th->state = THREAD_STATE_RUNNING;
             break;
         case SYSCALL_Write:
             return_val = sys_write((int) arg1,(char*) arg2,(unsigned int)arg3);

@@ -23,12 +23,8 @@ extern void disable_irq_interrupt();
 extern void enable_fiq_interrupt();
 extern void disable_fiq_interrupt();
 void kernel_syscall_dispatch(context* exec_context);
-void kernel_main_loop();
 void kernel_ready();
 void kernel_scheduler_switch_context();
-
-
-
 p_context kernel_get_thread_context();
 void kernel_set_thread_context(p_context p);
 

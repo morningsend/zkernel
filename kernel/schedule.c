@@ -32,6 +32,7 @@ p_thread scheduler_next_thread(scheduler_t* scheduler){
     p_thread th = NULL;
     if(scheduler->threads.size > 0)
         th =scheduler->threads.objects[0];
+    scheduler->current_executing= (int) ((scheduler->current_executing + 1) % scheduler->threads.size);
     return th;
 }
 p_thread scheduler_get_current_thread(scheduler_t* scheduler){
