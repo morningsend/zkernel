@@ -2,7 +2,7 @@
 // Created by zaiyangli on 4/8/16.
 //
 
-#include "programs.h"
+#include "begin.h"
 
 #if defined(UNIT_TEST)
 #include "test/test.h"
@@ -15,4 +15,5 @@ void startupTests(){
 #if defined(UNIT_TEST)
     runTests();
 #endif
+    shell_main(0, NULL);
 }
