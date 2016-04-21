@@ -76,8 +76,7 @@ int stream_read(io_stream* stream, char* buf, int size){
     }
 
     memcpy(buf, stream->buffer->buf + stream->pos, size);
-    stream-> pos += size;
-
+    stream_flush(stream);
     return size;
 }
 

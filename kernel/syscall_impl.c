@@ -9,8 +9,7 @@ void syscall_def_handler(int syscall_number){
     PL011_puts(UART0, "default syscall handler called");
 }
 void sys_exit(int code){
-
-    PL011_puts(UART0, "inside sys_exit");
+    PL011_puts(UART0, "Thread ");
     asm("b kernel_idle");
 }
 int sys_write(int stream, char* bytes, unsigned int size){
@@ -24,13 +23,6 @@ int sys_read(int stream, char* buffer, unsigned int size){
         PL011_gets(UART0, buffer, size);
     }
 }
-int sys_fork(){
-    return 0;
-}
 void sys_execute(void(*func)()){
 
-}
-void sys_yield(p_thread th, p_context con){
-    thread_save_context(th, con);
-    thread_suspend(th);
 }

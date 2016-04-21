@@ -289,11 +289,4 @@ void runTests(){
     testAllocator();
     testStressAllocator();
     testArray();
-    int n = 10;
-    while(1){
-        puts("tick, ");
-        for(int i = 0; i < 10000000; i++){
-            asm volatile("nop");
-        }
-    }
 }

@@ -15,7 +15,7 @@ typedef struct context_struct {
     uint32_t linkRegister;
 
 } context;
-typedef context* p_context;
+typedef struct context_struct * p_context;
 void init_context(context*);
 void context_clone(context* con1, context* cont2);
 #endif //_CONTEXT_H

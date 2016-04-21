@@ -46,7 +46,9 @@ void thread_resume(p_thread th);
 void thread_create(p_thread th, uint32_t priority, void* stack_base, uint32_t stack_size, void (*entry_point)() );
 void thread_destroy(p_thread th);
 
-void thread_exit(void);
+void thread_fork(p_thread parent, p_thread child, void* stack);
 
+void thread_exit(void);
+void thread_load_init_context(p_thread th);
 extern void thread_context_init();
 #endif //_PROCESS_H

@@ -5,7 +5,7 @@
 #ifndef _SYS_INIT_H
 #define _SYS_INIT_H
 
-#include "../user/programs.h"
+#include "../user/begin.h"
 #include "syscall_def.h"
 #include "syscall_impl.h"
 

@@ -21,7 +21,8 @@ void P0() {
     // test whether each x for 2^8 < x < 2^24 is prime or not
 
     for( uint32_t x = ( 1 << 8 ); x < ( 1 << 24 ); x++ ) {
-      int r = is_prime( x ); // printf( "is_prime( %d ) = %d\n", x, r );
+      int r = is_prime( x );
+      printf( "is_prime( %d ) = %d\n", x, r );
     }
   }
 }

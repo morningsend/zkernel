@@ -40,8 +40,9 @@ p_thread scheduler_get_current_thread(scheduler_t* scheduler){
         th =scheduler->threads.objects[0];
     return th;
 }
-void scheduler_kill_current_thread(scheduler_t* scheduler){
+p_thread scheduler_kill_current_thread(scheduler_t* scheduler){
     p_thread th = scheduler_get_current_thread(scheduler);
     array_delete_element(&scheduler->threads, th);
+    return th;
 }
 void scheduler_update(scheduler_t* sch);

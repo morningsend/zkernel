@@ -15,7 +15,8 @@ void P2() {
     // compute the Hamming weight of each x for 2^8 < x < 2^24
 
     for( uint32_t x = ( 1 << 8 ); x < ( 1 << 24 ); x++ ) {
-      uint32_t r = weight( x );  // printf( "weight( %d ) = %d\n", x, r );
+      uint32_t r = weight( x );
+      printf( "weight( %d ) = %d\n", x, r );
     }
   }
 
