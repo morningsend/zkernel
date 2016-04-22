@@ -3,3 +3,8 @@
 //
 
 #include "fnode.h"
+void get_root_node(p_fnode node){
+
+
+
+}

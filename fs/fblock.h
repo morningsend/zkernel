@@ -7,14 +7,15 @@
 #define _FBLOCK_H
 
 #include <stdint-gcc.h>
-#include "fnode.h"
+
 
 #define BLOCK_TYPE_DIRECTORY_ENTRY 0
 #define BLOCK_TYPE_DATA 1
 #define BLOCK_TYPE_LINK_ENTRY 2
 
-#define BLOCK_SIZE_BYTES 256
+#define BLOCK_SIZE_BYTES 128
 #define BLOCK_SIZE_WORDS (BLOCK_SIZE_BYTES / sizeof(uint32_t))
+
 typedef struct block_header block_header;
 typedef struct block_header* p_block_header;
 struct block_header{

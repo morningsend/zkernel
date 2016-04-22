@@ -6,9 +6,10 @@
 #define _BITMAP_H
 
 #include <stdint-gcc.h>
+#include "fblock.h"
+#define BITMAP_BITS (BITMAP_WORD_SIZE * 32)
 
-#define BITMAP_BITS 65536
-#define BITMAP_WORD_SIZE (BITMAP_BITS/sizeof(uint32_t))
+#define BITMAP_WORD_SIZE (BLOCK_SIZE_BYTES/sizeof(uint32_t))
 #define BITS_IN_WORD (8 * sizeof(uint32_t))
 
 typedef struct bitmap_struct bitmap;

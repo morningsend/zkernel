@@ -5,21 +5,22 @@
 #ifndef _FDISK_H
 #define _FDISK_H
 
-#include <stdint-gcc.h>
+#include "bitmap.h"
+#include "fblock.h"
+#include "fnode.h"
+#include "../device/device.h"
+#define BITMAP_ALLOC_TABLE_FNODE 0
+#define BITMAP_ALLOC_TABLE_DATA 1
+#define FNODE_LIMIT 1024
+#define DATA_BLOCK_LIMIT 4096
+#define FNODE_BLOCK_BEGIN (2)
+#define DATA_BLOCK_BEGIN (2+FNODE_LIMIT/FNODE_PER_BLOCK)
+extern bitmap node_alloc_table;
+extern bitmap block_alloc_table;
 
-/**super block**/
-
-struct fdisk_header {
-    char magic_iden[8];
-    char partition_name[8];
-    uint32_t alloc_bitmap_begin;
-    uint32_t alloc_bitmap_count;
-    uint32_t fnode_block_begin;
-    uint32_t fnode_block_count;
-    uint32_t fnode_size;
-    uint32_t data_block_begin;
-    uint32_t data_block_count;
-    uint32_t data_block_header_size;
-};
-
+void disk_mount();
+void disk_format();
+int disk_allocate_block();
+void read_fnode(p_fnode node, int id);
+void write_node(p_fnode node);
 #endif //_FDISK_H
