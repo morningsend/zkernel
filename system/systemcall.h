@@ -9,6 +9,11 @@
                             "svc #0\n"\
                             ::[sysnum] "r" (ID):"r7");
 
+#define _SYS_CALL_RET(ID, retval) asm("mov r7, %[sysnum]\n"\
+                            "svc #0\n"\
+                            "mov %[ret],r0\n"\
+                            :[ret] "=r" (retval) :[sysnum] "r" (ID):"r7");
+
 #define _SYS_CALL_ARG_1(ID, arg1) asm("mov r0, %[a]\n"\
                                 "mov r7, %[sysnum]\n"\
                                 "svc #0"\

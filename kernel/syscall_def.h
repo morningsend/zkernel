@@ -26,5 +26,5 @@
 #define SYSCALL_Execute SYSTEM_CALL_4
 #define SYSCALL_Read SYSTEM_CALL_5
 #define SYSCALL_Write SYSTEM_CALL_6
-
+#define SYSCALL_Gettid SYSTEM_CALL_7
 #endif //_SYSCALL_DEF_H

@@ -101,6 +101,6 @@ void circ_queue_for_each(p_circ_queue queue,void(*func)(void*)){
 void circ_queue_forward(p_circ_queue queue){
     if(queue->top != NULL){
         queue-> top = queue->top->next;
-        queue-> bottom = queue->top;
+        queue-> bottom = queue->bottom->next;
     }
 }

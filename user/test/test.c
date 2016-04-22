@@ -300,10 +300,11 @@ void testCircQueue(){
                 queue.top == queue.bottom);
     assert_true("node's next pointer will point to itself", queue.top->next == queue.top);
     circ_queue_enque(&queue, &b);
+    assert_false("top and bottom pointer should be different", queue.top == queue.bottom);
+    assert_true("top and bottom pointer should be different", queue.top == queue.bottom->next);
     circ_queue_enque(&queue, &c);
-
     assert_int_equal("top of the queue is a", a, *(int*)queue.top->object);
-
+    assert_false("top and bottom pointer should be different", queue.top == queue.bottom);
     assert_int_equal("bottom of the queue is c", c, *(int*)queue.bottom->object);
     int n = *(int*)circ_queue_deque(&queue);
     assert_int_equal("deque will return first object in queue", a, n);
@@ -320,6 +321,16 @@ void testCircQueue(){
     test_case_end();
     test_case_summary();
 }
+void testFork(){
+
+    int tid = fork();
+
+    if(tid == 0){
+        printf("in child");
+    }else {
+        printf("in parent");
+    }
+}
 void runTests(){
 
     testString();
@@ -333,5 +344,6 @@ void runTests(){
     testStressAllocator();
     testArray();
     testCircQueue();
+    testFork();
     exit(0);
 }

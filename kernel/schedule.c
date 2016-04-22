@@ -20,7 +20,7 @@ void scheduler_schedule_thread(scheduler_t* sched, p_thread th){
 void scheduler_update(scheduler_t* sch){
     /*do nothing for now */;
 }
-p_thread scheduler_next_thread(scheduler_t* scheduler){
+p_thread scheduler_schedule_next(scheduler_t *scheduler){
     p_thread th = scheduler_get_current_thread(scheduler);
     if(th->cpu_time > 0)
         th->cpu_time--;
@@ -29,6 +29,12 @@ p_thread scheduler_next_thread(scheduler_t* scheduler){
         circ_queue_forward(&scheduler->thread_queue);
         th = (p_thread) scheduler->thread_queue.top->object;
     }
+    return th;
+}
+p_thread scheduler_yield_next_thread(scheduler_t* sched){
+    p_thread th;
+    circ_queue_forward(&sched->thread_queue);
+    th = (p_thread) sched->thread_queue.top->object;
     return th;
 }
 p_thread scheduler_get_current_thread(scheduler_t* sched){

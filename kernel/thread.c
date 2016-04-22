@@ -65,18 +65,23 @@ void thread_suspend(p_thread th){
 void thread_destroy(p_thread th){
 
 }
-void thread_fork(p_thread parent, p_thread child, void* stack){
+void thread_fork(p_thread parent, p_thread child, void* stack_memory){
+
+    int sp_offset = ((int) parent->stack_base ) - ((int)parent->ctx.stackPointer);
+
     child->priority = parent->priority;
     memcpy(&child->ctx,&parent->ctx, sizeof(context));
-    int sp_offset = ((int) parent->stack_base ) - ((int)parent->ctx.stackPointer);
-    child->ctx.stackPointer = (uint32_t) child->stack_base - sp_offset;
+
     child->stack_size = parent->stack_size;
     child->state = THREAD_STATE_READY;
-    child->stack_base = stack + child->stack_size;
+    child->stack_base = stack_memory + child->stack_size;
+    child->ctx.stackPointer = (uint32_t) child->stack_base - sp_offset;
+    memcpy((void*)child->ctx.stackPointer,(void*) parent->ctx.stackPointer, sp_offset);
     child->parent_id = parent->id;
     child->id = next_thread_id;
     child->entry = parent->entry;
     child->exit_code = parent->exit_code;
+    child->cpu_time = parent->cpu_time;
     next_thread_id++;
 }
 

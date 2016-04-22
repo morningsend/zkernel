@@ -11,5 +11,4 @@
 #include "../../libc/free_list.h"
 #include "../../libc/circular_queue.h"
 void runTests();
-
 #endif //_TEST_H

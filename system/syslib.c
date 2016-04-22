@@ -6,10 +6,12 @@
 
 
 void exit(int code){
-    _SYS_CALL_ARG_1(SYSCALL_Exit, code);
+    _SYS_CALL_ARG_1(SYSCALL_Exit, code)
 }
 int fork(){
-    return 0;
+    int tid = 0;
+    _SYS_CALL_RET(SYSCALL_Fork, tid)
+    return tid;
 }
 
 void yield(){
@@ -31,4 +33,9 @@ int write(int stream, char* buffer, int size){
 
 void execute(void (*program)()){
     return;
+}
+int gettid(){
+    int tid;
+    _SYS_CALL_RET(SYSCALL_Gettid, tid)
+    return tid;
 }

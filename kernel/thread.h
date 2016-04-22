@@ -26,7 +26,7 @@
 #define THREAD_STATE_NEW 0x05
 #define THREAD_STATE_RUNNING 0x01
 
-#define THREAD_STACK_SIZE 0x400
+#define THREAD_STACK_SIZE 0x1000
 
 typedef struct thread_struct{
     uint32_t id;

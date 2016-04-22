@@ -21,10 +21,10 @@ struct scheduler_struct {
 void init_scheduler(scheduler_t* scheduler, allocator *allocator1);
 void scheduler_schedule_thread(scheduler_t* thread_scheduler, p_thread th);
 p_thread scheduler_find_thread(scheduler_t* scheduler, uint32_t tid);
-p_thread scheduler_next_thread(scheduler_t* scheduler);
+p_thread scheduler_schedule_next(scheduler_t *scheduler);
 p_thread scheduler_get_current_thread(scheduler_t* scheduler);
 p_thread scheduler_kill_current_thread(scheduler_t*);
 void scheduler_update(scheduler_t* sch);
-
+p_thread scheduler_yield_next_thread(scheduler_t* sched);
 void scheduler_destroy(scheduler_t* sched);
 #endif //_SCHEDULE_H

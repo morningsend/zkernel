@@ -1,5 +1,5 @@
 #include "kernel.h"
-#define MULTITASKING 0
+#define MULTITASKING 1
 #define KERNEL_TESTING 1
 
 #ifdef KERNEL_TESTING
@@ -72,19 +72,26 @@ void kernel_switch_context(context* con){
     thread_save_context(th, con);
     thread_suspend(th);
     scheduler_update(&thread_scheduler);
-    th = scheduler_next_thread(&thread_scheduler);
+    th = scheduler_yield_next_thread(&thread_scheduler);
+    memcpy(con, &th->ctx, sizeof(context));
+    th->state = THREAD_STATE_RUNNING;
+}
+void kernel_schedule_next_thread(context* con){
+    p_thread th = scheduler_get_current_thread(&thread_scheduler);
+    thread_save_context(th, con);
+    thread_suspend(th);
+    scheduler_update(&thread_scheduler);
+    th = scheduler_schedule_next(&thread_scheduler);
     memcpy(con, &th->ctx, sizeof(context));
     th->state = THREAD_STATE_RUNNING;
 }
 void kernel_fork_thread(){
     p_thread parent = scheduler_get_current_thread(&thread_scheduler);
-
     p_thread child = mem_alloc(&kernel_allocator, sizeof(thread));
     void* stack = mem_alloc(&kernel_allocator, sizeof(parent->stack_size));
-
     thread_fork(parent, child, stack);
-    parent->ctx.registers[0] = 0;
-    child->ctx.registers[0] = child->id;
+    parent->ctx.registers[0] = child->id;
+    child->ctx.registers[0] = 0;
     scheduler_schedule_thread(&thread_scheduler, child);
 }
 void kernel_irq_handler(context* con) {
@@ -94,8 +101,7 @@ void kernel_irq_handler(context* con) {
     // Step 4: handle the interrupt, then clear (or reset) the source.
     switch(id){
         case GIC_SOURCE_TIMER0:
-            PL011_puts(UART0, "tock, ");
-            kernel_switch_context(con);
+            kernel_schedule_next_thread(con);
             timer_clear_interrupt(timer_id);
             break;
         case GIC_SOURCE_TIMER1:
@@ -119,9 +125,10 @@ void kernel_syscall_dispatch(context* exec_context){
         case SYSCALL_Exit:
 
             th = scheduler_kill_current_thread(&thread_scheduler);
+            th->exit_code = (int) arg1;
             destroy_thread(th);
             scheduler_update(&thread_scheduler);
-            th = scheduler_next_thread(&thread_scheduler);
+            th = scheduler_schedule_next(&thread_scheduler);
             memcpy(exec_context, &th->ctx, sizeof(context));
             th->state = THREAD_STATE_RUNNING;
             break;
@@ -140,7 +147,13 @@ void kernel_syscall_dispatch(context* exec_context){
             sys_execute(arg1);
             break;
         case SYSCALL_Fork:
+            th = scheduler_get_current_thread(&thread_scheduler);
+            thread_save_context(th, exec_context);
             kernel_fork_thread();
+            break;
+        case SYSCALL_Gettid:
+            th = scheduler_get_current_thread(&thread_scheduler);
+            exec_context->registers[0] = th->id;
             break;
         default:
             syscall_def_handler(syscall_number);
