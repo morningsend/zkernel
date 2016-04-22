@@ -6,7 +6,7 @@
 #define _PROGRAMS_H
 
 #include "shell.h"
-#define UNIT_TEST 1
+#define UNIT_TEST 0
 
 
 

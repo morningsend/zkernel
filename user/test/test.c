@@ -345,5 +345,4 @@ void runTests(){
     testArray();
     testCircQueue();
     testFork();
-    exit(0);
 }

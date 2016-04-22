@@ -14,7 +14,6 @@ void _start(){
 #if !defined(UNIT_TEST) || UNIT_TEST == 0
     shell_main(0, NULL);
 #endif
-
 }
 void startupTests(){
 #if defined(UNIT_TEST) && UNIT_TEST == 1

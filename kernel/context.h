@@ -18,4 +18,5 @@ typedef struct context_struct {
 typedef struct context_struct * p_context;
 void init_context(context*);
 void context_clone(context* con1, context* cont2);
+void context_save_to_stack(context* , uint32_t );
 #endif //_CONTEXT_H

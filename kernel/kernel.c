@@ -16,6 +16,7 @@ p_thread create_thread(){
     p_thread th = mem_alloc(&kernel_allocator, sizeof(thread));
     void* stack = mem_alloc(&user_allocator, THREAD_STACK_SIZE);
     thread_create(th, PRIORITY_NORMAL, stack+THREAD_STACK_SIZE, THREAD_STACK_SIZE, user_init);
+    thread_load_init_context(th);
     return th;
 }
 p_thread create_idle_thread(){
@@ -37,7 +38,6 @@ void init_mem_alloc(){
     init_alloc_with_pool(&user_allocator, & user_heap_base, (uint32_t)&user_heap_size);
 }
 
-
 void kernel_init(){
     PL011_puts(UART0, "kernel starting\n");
     init_mem_alloc();
@@ -52,7 +52,7 @@ void kernel_init(){
 void kernel_device_init(){
     if(MULTITASKING == 1) {
         timer_id = request_timer_device();
-        timer_set_ticks(timer_id, 0x80000);
+        timer_set_ticks(timer_id, 0x20000);
         timer_set_periodic_mode(timer_id);
         timer_enable_interrupt(timer_id);
         timer_set_size_32bit(timer_id);
@@ -77,6 +77,7 @@ void kernel_switch_context(context* con){
     th->state = THREAD_STATE_RUNNING;
 }
 void kernel_schedule_next_thread(context* con){
+
     p_thread th = scheduler_get_current_thread(&thread_scheduler);
     thread_save_context(th, con);
     thread_suspend(th);
@@ -84,6 +85,7 @@ void kernel_schedule_next_thread(context* con){
     th = scheduler_schedule_next(&thread_scheduler);
     memcpy(con, &th->ctx, sizeof(context));
     th->state = THREAD_STATE_RUNNING;
+
 }
 void kernel_fork_thread(){
     p_thread parent = scheduler_get_current_thread(&thread_scheduler);

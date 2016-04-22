@@ -92,6 +92,12 @@ void thread_load_init_context(p_thread th){
     th->ctx.linkRegister = (uint32_t ) th->entry;
     th->state = THREAD_STATE_NEW;
     th->ctx.programCounter = (uint32_t ) th->entry;
+    th->ctx.registers[11] = th->ctx.stackPointer;
+    context_save_to_stack(&th->ctx, (uint32_t) 0);
+    context_save_to_stack(&th->ctx, (uint32_t) 0);
+    context_save_to_stack(&th->ctx, (uint32_t) thread_exit);
+    context_save_to_stack(&th->ctx, (uint32_t) 0);
+
 }
 uint32_t thread_get_cpu_time(uint32_t priority){
     uint32_t cpu_time = 0;

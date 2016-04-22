@@ -7,6 +7,13 @@
 #define IN_BUF_SIZE 127
 char prompt_text[] = "$ ";
 
+void execFork(char** options, int argc){
+
+    if(argc < 2) printf("fork: usage\n\t fork [command]");
+    int tid = fork();
+    printf("fork executed. tid=%d", tid);
+}
+
 void command(char** options, int argc){
     if(argc < 1) return;
     char* prog_name = options[0];
@@ -16,8 +23,14 @@ void command(char** options, int argc){
         P1();
     }else if(strcmp(prog_name, "P2") == 0){
         P2();
+    }else if(strcmp(prog_name, "fork") == 0){
+        execFork(options, argc);
+    }else if(strcmp(prog_name, "exit") == 0){
+        printf("\nShell Exit.");
+        exit(0);
+    }else {
+        printf("command %s not found\n", prog_name);
     }
-    printf("command %s not found\n", prog_name);
 }
 
 char* skip_ws(char* string){
@@ -82,6 +95,5 @@ int shell_main(int argc, char **argv){
         gets(input_buffer, IN_BUF_SIZE);
         parse_input(input_buffer, args_buf, &argn);
         command(args_buf, argn);
-        exit(0);
     }
 }
