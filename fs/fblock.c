@@ -6,16 +6,17 @@
 #include "../libc/string.h"
 #include "fnode.h"
 
-void block_create_type_data(p_fblock block, uint32_t owner, uint32_t id){
+void block_create_type_data(p_fblock block,uint32_t id, char* data, uint32_t n){
     block->header.type = BLOCK_TYPE_DATA;
-    block->header.owner = owner;
     block->header.id = id;
+    if(n > BLOCK_FILE_MAX_BYTE_COUNT) n = BLOCK_FILE_MAX_BYTE_COUNT;
+    block->payload.data_block.size = n;
+    memcpy(block->payload.data_block.data, data, n);
 }
-void block_create_type_dir(p_fblock block, uint32_t owner, uint32_t parent, uint32_t id){
+void block_create_type_dir(p_fblock block, uint32_t id){
     memset(block, (int) sizeof(fblock), 0);
     block->header.id = id;
     block->header.type = BLOCK_TYPE_DIRECTORY_ENTRY;
-    block->header.owner = owner;
     block->payload.dir_block.count = 0;
 }
 
@@ -29,4 +30,20 @@ void block_dir_add_entry(p_fblock block, p_fnode entry){
     if(block_dir_has_space(block)){
         block->payload.dir_block.nodes[block->payload.dir_block.count++] = entry->fid;
     }
+}
+void block_dir_remove_entry(p_fblock block, p_fnode entry){
+    uint32_t temp;
+    if(block->header.type==BLOCK_TYPE_DIRECTORY_ENTRY && block->payload.dir_block.count > 0){
+        for(int i = 0; i < block->payload.dir_block.count; i++){
+            if(block->payload.dir_block.nodes[i] == entry->fid){
+                temp = block->payload.dir_block.nodes[block->payload.dir_block.count-1];
+                block->payload.dir_block.nodes[i] = temp;
+                block->payload.dir_block.nodes[block->payload.dir_block.count-1] = 0;
+                block->payload.dir_block.count--;
+                break;
+            }
+        }
+    }
+
+
 }

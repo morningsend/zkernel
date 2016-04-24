@@ -8,7 +8,7 @@
 
 bitmap node_alloc_table;
 bitmap block_alloc_table;
-
+static const char ZERO_BLOCK[BLOCK_SIZE_BYTES];
 static fnode root_node;
 static fnode node_buffer;
 static uint8_t raw_block_buffer[BLOCK_SIZE_BYTES];
@@ -69,7 +69,7 @@ void disk_format(){
     int block_id = disk_allocate_block();
     root_node.blocks[0] =(uint32_t) block_id;
 
-    block_create_type_dir(&block_buffer, root_node.fid, root_node.fid, (uint32_t) block_id);
+    block_create_type_dir(&block_buffer, (uint32_t) block_id);
 
     write_disk_header(&disk_header);
     write_alloc_tables();
@@ -158,4 +158,10 @@ void read_data_block (uint32_t id, p_fblock block ){
     if(id < 0 || id >= DATA_BLOCK_LIMIT)
         return;
     disk_rd(DATA_BLOCK_BEGIN + id, (uint8_t*) block, BLOCK_SIZE_BYTES);
+}
+
+void disk_data_block_zero_out(int block_id){
+    if(block_id < 0 || block_id > DATA_BLOCK_LIMIT)
+        return;
+    disk_wr(block_id + DATA_BLOCK_BEGIN, (uint8_t*) ZERO_BLOCK, BLOCK_SIZE_BYTES);
 }

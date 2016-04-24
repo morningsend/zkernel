@@ -91,5 +91,8 @@ void read_disk_header(p_fdisk_header header);
 void write_disk_header(p_fdisk_header header);
 void verify_partition(p_fdisk_header header, int* error);
 p_fnode disk_get_root_node();;
+void disk_data_block_zero_out(int block_id);
+
+void ftree_file_read(p_fnode node, char* buffer, uint32_t size);
 
 #endif //_FDISK_H
