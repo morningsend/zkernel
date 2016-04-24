@@ -145,3 +145,85 @@ void strcat(char* destination, char* source){
     int len = strlen(destination);
     memcpy(destination+len, source, strlen(source)+1);
 }
+
+char* skip_char_match(char ch, char* str){
+    while(*str != '\0' && *str != ch){
+        str++;
+    }
+    return str;
+}
+char* skip_char_not_match(char ch, char* str){
+    while(*str != '\0' && *str == ch){
+        str++;
+    }
+    return str;
+}
+void str_splt(char separator, char* str, char** parts, int n, int* part_count ){
+    char* c = str;
+    int count = 0;
+    do {
+        c = skip_char_match(separator, c);
+        if(*c != '\0'){
+            *parts = c;
+            count++;
+            parts++;
+            c = skip_char_not_match(separator, c);
+        }
+    }while(* c != '\0' && count < n);
+
+    *part_count = count;
+}
+
+void str_splt_ws(char* str, char** parts, int n, int* part_count){
+    char* c = str;
+    int count = 0;
+    do {
+        c = skip_ws(c);
+        if(*c != '\0'){
+            *parts = c;
+            count++;
+            parts++;
+            c = skip_non_ws(c);
+        }
+    }while(* c != '\0' && count < n);
+
+    *part_count = count;
+}
+
+char* skip_ws(char* string){
+    int done = 0;
+    while(*string !='\0' && !done){
+        switch(*string){
+            case ' ':
+            case '\n':
+            case '\r':
+            case '\t':
+            case '\f':
+                *string = '\0';
+                string++;
+                break;
+            default:
+                done = 1;
+                break;
+        }
+    }
+    return string;
+}
+char* skip_non_ws(char* string){
+    int done = 0;
+    while(*string !='\0' && !done){
+        switch(*string){
+            case ' ':
+            case '\n':
+            case '\r':
+            case '\t':
+            case '\f':
+                done = 1;
+                break;
+            default:
+                string++;
+                break;
+        }
+    }
+    return string;
+}

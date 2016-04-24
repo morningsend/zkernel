@@ -12,6 +12,6 @@
 #include "../system/syslib.h"
 int shell_main(int argc, char* argv[]);
 void command(char** options, int argc);
-void parse_input(char* line, char** args, int* argc);
+void parse_input(char* line, char** args, int n, int* argc);
 
 #endif //_SHELL_H

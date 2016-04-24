@@ -25,4 +25,11 @@ int format_float(float n, char *buf, int len);
 
 void memset(void* buf, int size, int value);
 void memcpy(void* destination, void* source, int size);
+
+void str_splt(char separator, char* str, char** parts, int n, int* part_count );
+void str_splt_ws(char* str, char** parts, int n, int* part_count);
+char* skip_ws(char* string);
+char* skip_non_ws(char* string);
+char* skip_char_match(char ch, char* str);
+char* skip_char_not_match(char ch, char* str);
 #endif //_STRING_H

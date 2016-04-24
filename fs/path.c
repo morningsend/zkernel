@@ -3,3 +3,8 @@
 //
 
 #include "path.h"
+
+
+void parse_path(char* path, char** parts, int n, int* parts_count){
+
+}

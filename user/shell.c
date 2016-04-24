@@ -33,57 +33,9 @@ void command(char** options, int argc){
     }
 }
 
-char* skip_ws(char* string){
-    int done = 0;
-    while(*string !='\0' && !done){
-        switch(*string){
-            case ' ':
-            case '\n':
-            case '\r':
-            case '\t':
-            case '\f':
-                *string = '\0';
-                string++;
-                break;
-            default:
-                done = 1;
-                break;
-        }
-    }
-    return string;
-}
-char* skip_non_ws(char* string){
-    int done = 0;
-    while(*string !='\0' && !done){
-        switch(*string){
-            case ' ':
-            case '\n':
-            case '\r':
-            case '\t':
-            case '\f':
-                done = 1;
-                break;
-            default:
-                string++;
-                break;
-        }
-    }
-    return string;
-}
-void parse_input(char* line, char** args, int* argc){
-    char* c = line;
-    int count = 0;
-    do {
-        c = skip_ws(c);
-        if(*c != '\0'){
-            *args = c;
-            count++;
-            args++;
-            c = skip_non_ws(c);
-        }
-    }while(* c != '\0');
 
-    *argc = count;
+void parse_input(char* line, char** args, int n, int* argc){
+    str_splt_ws(line, args, n, argc);
 }
 
 int shell_main(int argc, char **argv){
@@ -93,7 +45,7 @@ int shell_main(int argc, char **argv){
     while(1){
         puts(prompt_text);
         gets(input_buffer, IN_BUF_SIZE);
-        parse_input(input_buffer, args_buf, &argn);
+        parse_input(input_buffer, args_buf,32 ,&argn);
         command(args_buf, argn);
     }
 }

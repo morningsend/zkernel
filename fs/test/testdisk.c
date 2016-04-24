@@ -3,6 +3,8 @@
 //
 
 #include "testdisk.h"
+#include "../fnode.h"
+#include "../fdisk.h"
 
 static bitmap bmap;
 
@@ -41,14 +43,37 @@ void testBitmap(){
     test_case_end();
     test_case_summary();
 }
-void testBlock(){
-    test_case_begin("FBlock test case for allocating files");
+void testSizes(){
+    test_case_begin("File System Structs test cases");
     assert_int_equal("struct fblock size should equal to defined block size constant", BLOCK_SIZE_BYTES, sizeof(fblock));
+    assert_int_equal("struct fnode has size equal to  block size", sizeof(fnode), BLOCK_SIZE_BYTES);
+    assert_int_equal("allocation table has size equal to block size", sizeof(bitmap), BLOCK_SIZE_BYTES);
+    assert_int_equal("disk header has size equal to a block size", sizeof(fdisk_header), BLOCK_SIZE_BYTES);
+    test_case_end();
+    test_case_summary();
+}
+
+void testDiskFormat(){
+    test_case_begin("Disk format test case");
+
+    int error=0;
+    int files_count = -1;
+    disk_format();
+    disk_mount(&error);
+
+    p_fnode root= disk_get_root_node();
+    fblock block;
+    assert_int_equal("newly formatted disk should not have error when mounted", error, DISK_MOUNT_OK);
+    assert_true("new formatted root should have id ROOT_NOTE_ID", ROOT_NODE_ID == root->fid);
+    assert_int_equal("root node should have a single block", 1, root->block_count);
+    int block_id = root->blocks[0];
+
     test_case_end();
     test_case_summary();
 }
 void runDiskTest(){
     testBitmap();
-    testBlock();
+    testSizes();
+    testDiskFormat();
 }
 

@@ -17,7 +17,6 @@ typedef struct bitmap_struct* p_bitmap;
 struct bitmap_struct{
     uint32_t bits[BITMAP_WORD_SIZE];
 };
-
 void bitmap_init(p_bitmap bmap, uint32_t val);
 
 void bitmap_set_on(p_bitmap bmap, uint32_t pos);

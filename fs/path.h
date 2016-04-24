@@ -2,7 +2,14 @@
 // Created by zaiyangli on 4/22/16.
 //
 
-#ifndef APP1_PATH_H
-#define APP1_PATH_H
+#ifndef _PATH_H
+#define _PATH_H
 
-#endif //APP1_PATH_H
+#include "../libc/string.h"
+#define PATH_MAXIMUM_LEVEL 16
+
+void parse_path(char* path, char** parts, int n, int* parts_count);
+
+
+
+#endif //_PATH_H
