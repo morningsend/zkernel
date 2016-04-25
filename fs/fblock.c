@@ -50,6 +50,4 @@ void block_dir_remove_entry(p_fblock block, p_fnode entry){
             }
         }
     }
-
-
 }

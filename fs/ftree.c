@@ -7,7 +7,8 @@
 
 int ftree_traverse_from_root(char* path, p_fnode result){
     int found;
-    p_fnode root = disk_get_root_node();
+    read_root_dir();
+    p_fnode root = ftree_get_root_node();
     found = ftree_traverse_from(root, path, result);
     return found;
 }
@@ -26,14 +27,15 @@ int ftree_traverse_from(p_fnode node, char* path, p_fnode result){
     if(node->type != FNODE_TYPE_DIRECTORY) {
         return NOT_FOUND;
     }
-
+    int found = NOT_FOUND;
     fnode node_buffer;
     fnode current_node = *node;
     fblock block_buffer;
     char* parts[PATH_MAXIMUM_LEVEL];
     int part_count;
     parse_path(path, parts, PATH_MAXIMUM_LEVEL, &part_count);
-    for(int i = 0; i < part_count; i++){
+    int dir_levels = part_count - 1;
+    for(int i = 0; i < dir_levels; i++){
         if(current_node.type == FNODE_TYPE_DIRECTORY) {
             if(strcmp(CURRENT_DIRECTORY_LABEL, parts[i])==0){
 
@@ -46,12 +48,20 @@ int ftree_traverse_from(p_fnode node, char* path, p_fnode result){
                 }
             }
         }else {
-
+            found = NOT_FOUND;
+            goto ftree_traverse_finally;
         }
     }
+    if(ftree_find_node_match_name_in_dir(&current_node, parts[part_count -1], &node_buffer))
+        goto ftree_traverse_found;
+    else goto ftree_traverse_finally;
 
-    *result = node_buffer;
-    return FOUND;
+    ftree_traverse_found:
+        found = FOUND;
+        *result = node_buffer;
+
+    ftree_traverse_finally:
+        return found;
 }
 int ftree_find_node_match_name_in_dir(p_fnode node, char *name, p_fnode result){
     fblock block_buffer;
@@ -60,12 +70,12 @@ int ftree_find_node_match_name_in_dir(p_fnode node, char *name, p_fnode result){
     if(name[0] == '\0'){
         return 0;
     }
-    if(node->type==FNODE_TYPE_DIRECTORY && node->block_count > 0){
+    if(node->type==FNODE_TYPE_DIRECTORY && node->files_in_dir > 0 && node->block_count > 0){
         for(int b = 0; b < node->block_count; b ++){
             read_data_block(node->blocks[b], &block_buffer);
             if(block_is_dir_block_empty(&block_buffer) && !found){
                 for(int j = 0; j < block_buffer.payload.dir_block.count; j++){
-                    read_fnode(block_buffer.payload.dir_block.nodes[j], & node_buffer);
+                    read_fnode(block_buffer.payload.dir_block.nodes[j], &node_buffer);
                     if(fnode_name_matches(&node_buffer, name)){
                         found = FOUND;
                         *result = node_buffer;
@@ -114,6 +124,7 @@ void ftree_delete_node_at(p_fnode node){
 
 void ftree_node_detach_child(p_fnode parent, p_fnode child){
     fblock block_buffer;
+    if( child-> parent_id != parent->fid) return;
     if(parent->type == FNODE_TYPE_DIRECTORY && parent->files_in_dir > 0){
         for(int i = 0; i < parent->block_count; i++){
             read_data_block(parent->blocks[i], &block_buffer);
@@ -121,7 +132,7 @@ void ftree_node_detach_child(p_fnode parent, p_fnode child){
                 for(int j = 0; j< block_buffer.payload.dir_block.count; j ++){
                     if(block_buffer.payload.dir_block.nodes[j] == child->fid){
                         block_dir_remove_entry(&block_buffer, child);
-                        parent->files_in_dir --;
+                        parent->files_in_dir = parent->files_in_dir - 1;
                         child->parent_id = 0xffffffff;
                         write_data_block(&block_buffer);
                         write_fnode(parent);
@@ -178,9 +189,10 @@ int ftree_preallocate_block(p_fnode node, int n){
     return allocate_count;
 }
 
-void ftree_create_dir_at(p_fnode parent, char *name, int preallocate, int* error){
+int ftree_create_dir_at(p_fnode parent, char *name, int preallocate, p_fnode out){
 
     fnode node;
+    int error = 0;
     if(parent->type == FNODE_TYPE_DIRECTORY){
         int fid = disk_allocate_fnode();
         if(fid > -1){
@@ -188,16 +200,20 @@ void ftree_create_dir_at(p_fnode parent, char *name, int preallocate, int* error
             write_fnode(&node);
             ftree_insert_node_at(parent, &node);
             ftree_preallocate_block(&node, preallocate);
-            *error = OK;
+            error = OK;
+            if(out != NULL){
+                *out = node;
+            }
         }else {
-            *error = ERROR_CANNOT_ALLOCATE_FNODE;
-            return;
+            error = ERROR_CANNOT_ALLOCATE_FNODE;
         }
     }
+    return error;
 }
-void ftree_create_file_at(p_fnode parent, char* name, int preallocate, int *error){
+int ftree_create_file_at(p_fnode parent, char* name, int preallocate, p_fnode out){
     fnode node;
     memset(&node, sizeof(fnode), 0);
+    int error = 0;
     if(parent->type == FNODE_TYPE_DIRECTORY){
         int fid = disk_allocate_fnode();
         if(fid > -1){
@@ -205,11 +221,15 @@ void ftree_create_file_at(p_fnode parent, char* name, int preallocate, int *erro
             write_fnode(&node);
             ftree_insert_node_at(parent, &node);
             ftree_preallocate_block(&node, preallocate);
+            if(out != NULL){
+                *out = node;
+            }
+            error = OK;
         }else {
-            *error = ERROR_CANNOT_ALLOCATE_FNODE;
-            return;
+            error = ERROR_CANNOT_ALLOCATE_FNODE;
         }
     }
+    return error;
 }
 int ftree_dir_get_file_count(p_fnode node){
     if(node->type == FNODE_TYPE_DIRECTORY){

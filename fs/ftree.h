@@ -37,8 +37,8 @@ void ftree_move_node(p_fnode node, p_fnode new_parent);
 int ftree_find_node_match_name_in_dir(p_fnode node, char *name, p_fnode result);
 int ftree_node_find_dir_block_with_space(p_fnode node, p_fblock block);
 
-void ftree_create_file_at(p_fnode parent, char* name, int preallocate, int *error);
-void ftree_create_dir_at(p_fnode parent, char *name, int preallocate, int* error);
+int ftree_create_file_at(p_fnode parent, char* name, int preallocate, p_fnode out);
+int ftree_create_dir_at(p_fnode parent, char *name, int preallocate, p_fnode out);
 void ftree_file_delete(p_fnode node);
 void ftree_file_delete_data(p_fnode node, int zero_out);
 void ftree_dir_delete(p_fnode node);
