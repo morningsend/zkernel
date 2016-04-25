@@ -6,7 +6,7 @@
 #include "../libc/string.h"
 
 void fnode_create_dir(p_fnode node, uint32_t fid, uint32_t parent_id, char* name){
-    memset(&node, (int) sizeof(fnode), 0);
+    memset(node, (int) sizeof(fnode), 0);
     node->type = FNODE_TYPE_DIRECTORY;
     node->parent_id = parent_id;
     node->fid = fid;
@@ -15,7 +15,7 @@ void fnode_create_dir(p_fnode node, uint32_t fid, uint32_t parent_id, char* name
     strncpy(node->name, name, FNODE_MAX_FILE_NAME_LENGTH);
 }
 void fnode_create_file(p_fnode node, uint32_t fid, uint32_t parent_id, char* name){
-    memset(&node, (int) sizeof(fnode), 0);
+    memset(node, (int) sizeof(fnode), 0);
     node->type = FNODE_TYPE_FILE;
     node->parent_id = parent_id;
     node->fid = fid;
@@ -28,8 +28,8 @@ void fnode_add_block(p_fnode node, p_fblock block){
     if(node->block_count >= FNODE_MAX_BLOCK_COUNT){
         return;
     }
-    if(node->type)
-    node->blocks[node->block_count++] = block->header.id;
+    if(node->type == FNODE_TYPE_DIRECTORY)
+        node->blocks[node->block_count++] = block->header.id;
 }
 void fnode_remove_block(p_fnode node, p_fblock block){
     if(node->block_count <= 0)

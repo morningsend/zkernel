@@ -39,7 +39,6 @@ void write_disk_header(p_fdisk_header header){
     disk_wr(DISK_HEADER_BLOCK_ID, (uint8_t*) header, BLOCK_SIZE_BYTES);
 }
 void read_root_dir(){
-
     read_fnode(ROOT_NODE_ID, &root_node);
 }
 void root_node_create_default(p_fnode node){
@@ -67,10 +66,10 @@ void disk_format(){
     root_node_init();
 
     int block_id = disk_allocate_block();
-    root_node.blocks[0] =(uint32_t) block_id;
 
     block_create_type_dir(&block_buffer, (uint32_t) block_id);
-
+    fnode_add_block(&root_node, &block_buffer);
+    write_data_block(&block_buffer);
     write_disk_header(&disk_header);
     write_alloc_tables();
     write_fnode(&root_node);

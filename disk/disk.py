@@ -97,9 +97,6 @@ if ( __name__ == '__main__' ) :
   
   while ( True ) :
     req = sd.readline().strip().split( ' ' )
-    print "received request:"
-    print req
-    print "\n"
     if   ( req[ 0 ] == REQ_CONF ) :
       ack = conf( req )
     elif ( req[ 0 ] == REQ_WR   ) :

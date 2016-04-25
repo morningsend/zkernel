@@ -147,13 +147,21 @@ void strcat(char* destination, char* source){
 }
 
 char* skip_char_match(char ch, char* str){
-    while(*str != '\0' && *str != ch){
+    while(*str != '\0' && *str == ch){
+
         str++;
     }
     return str;
 }
 char* skip_char_not_match(char ch, char* str){
+    while(*str != '\0' && *str != ch){
+        str++;
+    }
+    return str;
+}
+char* skip_char_match_replace(char ch, char* str,char replace){
     while(*str != '\0' && *str == ch){
+        *str = replace;
         str++;
     }
     return str;
@@ -162,7 +170,7 @@ void str_splt(char separator, char* str, char** parts, int n, int* part_count ){
     char* c = str;
     int count = 0;
     do {
-        c = skip_char_match(separator, c);
+        c = skip_char_match_replace(separator, c, '\0');
         if(*c != '\0'){
             *parts = c;
             count++;

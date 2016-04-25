@@ -6,5 +6,5 @@
 
 
 void parse_path(char* path, char** parts, int n, int* parts_count){
-
+    str_splt('/', path, parts, n, parts_count);
 }

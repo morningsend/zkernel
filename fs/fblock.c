@@ -6,12 +6,18 @@
 #include "../libc/string.h"
 #include "fnode.h"
 
+#ifndef NULL
+#define NULL ((void*)0)
+#endif
+
 void block_create_type_data(p_fblock block,uint32_t id, char* data, uint32_t n){
     block->header.type = BLOCK_TYPE_DATA;
     block->header.id = id;
     if(n > BLOCK_FILE_MAX_BYTE_COUNT) n = BLOCK_FILE_MAX_BYTE_COUNT;
     block->payload.data_block.size = n;
-    memcpy(block->payload.data_block.data, data, n);
+    if(data != NULL){
+        memcpy(block->payload.data_block.data, data, n);
+    }
 }
 void block_create_type_dir(p_fblock block, uint32_t id){
     memset(block, (int) sizeof(fblock), 0);

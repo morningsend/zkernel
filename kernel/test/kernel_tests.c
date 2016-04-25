@@ -60,4 +60,5 @@ void testScheduler(){
 void runKernelTests(){
     testScheduler();
     runDiskTest();
+    runFileTests();
 }

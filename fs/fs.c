@@ -4,11 +4,12 @@
 
 #include "fs.h"
 
-void fs_init(int* error){
-    disk_mount(error);
-    if(*error == DISK_UNFORMATTED_ERROR){
+void fs_init(){
+    int error;
+    disk_mount(&error);
+    if(error == DISK_UNFORMATTED_ERROR){
         disk_format();
-    }else if(*error == DISK_NO_ROOT_FOUND){
+    }else if(error == DISK_NO_ROOT_FOUND){
         disk_format();
     }
 }

@@ -20,7 +20,7 @@ set(RELEASE_SOURCE_FILES libc/string.c libc/string.h libc/math.h libc/math.c lib
         kernel/test/kernel_tests.c kernel/test/kernel_tests.h libc/free_list.c libc/free_list.h
         user/shell.c user/shell.h libc/util.c libc/util.h libc/circular_queue.c libc/circular_queue.h
         fs/fnode.c fs/fnode.h fs/fblock.c fs/fblock.h fs/bitmap.c fs/bitmap.h
-        fs/test/testdisk.c fs/test/testdisk.h fs/file.c fs/file.h fs/fdisk.c fs/fdisk.h fs/fs.c fs/fs.h fs/path.c fs/path.h fs/ftree.c fs/ftree.h)
+        fs/test/testdisk.c fs/test/testdisk.h fs/file.c fs/file.h fs/fdisk.c fs/fdisk.h fs/fs.c fs/fs.h fs/path.c fs/path.h fs/ftree.c fs/ftree.h fs/test/testfs.c fs/test/testfs.h)
 
 
 set(OUTPUT_PATH "${CMAKE_SOURCE_DIR}/build/")
