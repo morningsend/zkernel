@@ -92,14 +92,54 @@ void testFTreeWrite(){
 
     assert_int_equal("Writing 'hello world' to file will change file size to strlen(hello world)",strlen(data), node_txt_file.filesize );
     assert_int_equal("test.txt will need 1 block to store 'hello world'", 1, node_txt_file.block_count);
+    int fid = node_txt_file.fid;
+    int bid = node_txt_file.blocks[0];
+    ftree_delete_node_at(&node_txt_file);
+
+    assert_int_equal("deleting file should free allocated file node", 0, disk_get_fnode_alloc_status(fid));
+    assert_int_equal("deleting file should free allocated data blocks", 0, disk_get_data_block_alloc_status(bid));
 
     test_case_end();
     test_case_summary();
 }
+
+void testMoveFile(){
+    read_root_dir();
+    p_fnode root_node = ftree_get_root_node();
+    char dir1_name[32] = "dir1";
+    char dir2_name[32] = "dir2";
+    char file_name[32] = "file.txt";
+    fnode node;
+    ftree_create_dir_at(root_node, dir1_name, 1, NULL);
+    ftree_create_dir_at(root_node, dir2_name, 1, NULL);
+    ftree_create_file_at(root_node, file_name,1, NULL);
+    read_root_dir();
+    test_case_begin("ftree file moving test case");
+    assert_int_equal("root node has 3 files",3,root_node->files_in_dir );
+    test_case_end();
+    test_case_summary();
+}
 void testFnode(){
+    fnode node;
+    fblock block;
+
+    fnode_create_file(&node, 1,0,"hello");
+    block_create_type_data(&block, 33, "world", 5);
+
+    test_case_begin("FNode test case");
+    assert_string_equal("node should have name hello", "hello", node.name);
+    fnode_add_block(&node, &block);
+    assert_int_equal("node should have one block", 1, node.block_count);
+    assert_int_equal("node should have block with id 33", 33, node.blocks[0]);
+
+    test_case_end();
+    test_case_summary();
 
 }
 void testFBlock(){
+
+}
+void testFile(){
 
 }
 void runFileTests(){
@@ -107,4 +147,5 @@ void runFileTests(){
     testPathParser();
     testFTree();
     testFTreeWrite();
+    testMoveFile();
 }

@@ -93,6 +93,9 @@ void verify_partition(p_fdisk_header header, int* error);
 p_fnode disk_get_root_node();;
 void disk_data_block_zero_out(int block_id);
 
-void ftree_file_read(p_fnode node, char* buffer, uint32_t size);
+int ftree_file_read(p_fnode node, char* buffer, uint32_t size);
 
+int disk_get_data_block_alloc_status(uint32_t id);
+int disk_get_fnode_alloc_status(uint32_t id);
+void read_alloc_table();
 #endif //_FDISK_H

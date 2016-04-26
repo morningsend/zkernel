@@ -10,6 +10,8 @@
 #include "context.h"
 #include "schedule.h"
 #include "../libc/allocator.h"
+#include "../fs/file.h"
+#include "../fs/fs.h"
 
 extern void* kernel_heap_base;
 extern void* kernel_heap_size;

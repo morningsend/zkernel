@@ -234,6 +234,8 @@ int ftree_create_file_at(p_fnode parent, char* name, int preallocate, p_fnode ou
 int ftree_dir_get_file_count(p_fnode node){
     if(node->type == FNODE_TYPE_DIRECTORY){
         return (int) node->files_in_dir;
+    }else {
+        return 0;
     }
 }
 void ftree_file_write_bytes(p_fnode node, char* bytes, uint32_t size){
@@ -319,6 +321,6 @@ void ftree_dir_delete(p_fnode node){
 void ftree_dir_delete_recursive(p_fnode node){
     if(node->fid == ROOT_NODE_ID) disk_format();
 }
-void ftree_file_read(p_fnode node, char* buffer, uint32_t size){
+int ftree_file_read(p_fnode node, char* buffer, uint32_t size){
 
 }

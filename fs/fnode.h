@@ -33,9 +33,7 @@ struct fnode_t{
 void fnode_create_dir(p_fnode node, uint32_t fid, uint32_t parent_id,  char* name);
 void fnode_create_file(p_fnode node, uint32_t fid, uint32_t parent_id, char* name);
 
-void fnode_file_append(p_fnode file, const char* data, int n);
-
 void fnode_add_block(p_fnode node, p_fblock block);
-
+void fnode_remove_block(p_fnode node, p_fblock block);
 int fnode_name_matches(p_fnode, const char* name);
 #endif //_FNODE_H

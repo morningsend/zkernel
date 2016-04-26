@@ -9,8 +9,8 @@
 static int timer_id;
 static allocator kernel_allocator;
 static allocator user_allocator;
-static thread user_thread;
 static scheduler_t thread_scheduler;
+static fs_table file_open_table;
 
 p_thread create_thread(){
     p_thread th = mem_alloc(&kernel_allocator, sizeof(thread));
@@ -42,7 +42,7 @@ void kernel_init(){
     PL011_puts(UART0, "kernel starting\n");
     init_mem_alloc();
     init_scheduler(&thread_scheduler, &kernel_allocator);
-
+    fs_init();
 #ifdef KERNEL_TESTING
     runKernelTests();
 #endif
@@ -65,7 +65,6 @@ void kernel_device_init(){
 
         enable_irq_interrupt();
     }
-
 }
 void kernel_switch_context(context* con){
     p_thread th = scheduler_get_current_thread(&thread_scheduler);
@@ -161,7 +160,6 @@ void kernel_syscall_dispatch(context* exec_context){
             syscall_def_handler(syscall_number);
             break;
     }
-
     enable_irq_interrupt();
 }
 

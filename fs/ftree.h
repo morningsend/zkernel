@@ -45,7 +45,6 @@ void ftree_dir_delete(p_fnode node);
 int ftree_dir_get_file_count(p_fnode node);
 void ftree_node_detach_child(p_fnode parent, p_fnode child);
 
-
 void ftree_file_write_bytes(p_fnode node, char* bytes, uint32_t size);
 #endif //_FTREE_H
 

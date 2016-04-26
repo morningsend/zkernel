@@ -15,6 +15,11 @@ static uint8_t raw_block_buffer[BLOCK_SIZE_BYTES];
 static fblock block_buffer;
 static fdisk_header disk_header;
 
+void read_alloc_table(){
+    disk_rd(BITMAP_ALLOC_TABLE_FNODE, (uint8_t *) node_alloc_table.bits, BLOCK_SIZE_BYTES);
+    disk_rd(BITMAP_ALLOC_TABLE_DATA, (uint8_t *) block_alloc_table.bits, BLOCK_SIZE_BYTES);
+}
+
 void disk_mount(int* error){
 
     *error = 0;
@@ -22,9 +27,7 @@ void disk_mount(int* error){
     read_disk_header(&disk_header);
     verify_partition(&disk_header, error);
     if(*error == 0){
-        disk_rd(BITMAP_ALLOC_TABLE_FNODE, (uint8_t *) node_alloc_table.bits, BLOCK_SIZE_BYTES);
-        disk_rd(BITMAP_ALLOC_TABLE_DATA, (uint8_t *) block_alloc_table.bits, BLOCK_SIZE_BYTES);
-
+        read_alloc_table();
         read_root_dir();
     }else{
         //TODO: handle error or report error
@@ -163,4 +166,11 @@ void disk_data_block_zero_out(int block_id){
     if(block_id < 0 || block_id > DATA_BLOCK_LIMIT)
         return;
     disk_wr(block_id + DATA_BLOCK_BEGIN, (uint8_t*) ZERO_BLOCK, BLOCK_SIZE_BYTES);
+}
+
+int disk_get_data_block_alloc_status(uint32_t id){
+    return (int )bitmap_get(&block_alloc_table, id);
+}
+int disk_get_fnode_alloc_status(uint32_t id){
+    return (int) bitmap_get(&node_alloc_table, id);
 }

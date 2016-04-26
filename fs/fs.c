@@ -4,6 +4,8 @@
 
 #include "fs.h"
 
+
+
 void fs_init(){
     int error;
     disk_mount(&error);
@@ -13,18 +15,26 @@ void fs_init(){
         disk_format();
     }
 }
-void fs_get_file_iterator(char* path, p_file* file){
+void fs_table_init(p_fs_table table){
+    for(int i = 0; i < FILE_TABLE_SIZE; i++){
+        table->file_table[i] = NULL;
+    }
+    table->driver = fs_driver;
+    table->lock = LOCK_FREE;
+}
+void fs_table_insert(p_fs_table table, p_fs_entry entry){
 
 }
-void fs_create_file_at(char* path, char* name, void* data, int n_bytes, p_file* file, int overwrite){
+void fs_table_remove(p_fs_table table, p_fs_entry entry){
 
 }
-void fs_create_dir_at(char* path, char* name, p_file* file){
+void fs_table_get(p_fs_table table, int eid, p_fs_entry entry){
 
 }
-void fs_open_file(char* path, p_file* file  ){
+void fs_table_set(p_fs_table table, int eid, p_fs_entry entry){
 
 }
-void fs_close_file(p_file* file){
 
-}
+const fs_operations fs_driver = {
+    
+};
