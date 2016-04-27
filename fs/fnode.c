@@ -28,7 +28,9 @@ void fnode_add_block(p_fnode node, p_fblock block){
     if(node->block_count >= FNODE_MAX_BLOCK_COUNT){
         return;
     }
-    if(node->type == FNODE_TYPE_DIRECTORY)
+    if(node->type == FNODE_TYPE_DIRECTORY && block->header.type == BLOCK_TYPE_DIRECTORY_ENTRY)
+        node->blocks[node->block_count++] = block->header.id;
+    else if(node->type == FNODE_TYPE_FILE && block->header.type == BLOCK_TYPE_DATA)
         node->blocks[node->block_count++] = block->header.id;
 }
 void fnode_remove_block(p_fnode node, p_fblock block){
@@ -49,4 +51,10 @@ void fnode_remove_block(p_fnode node, p_fblock block){
 
 int fnode_name_matches(p_fnode node, const char* name){
     return strcmp(node->name, name) == 0? 1: 0;
+}
+int fnode_is_dir(p_fnode node){
+    return node->type == FNODE_TYPE_DIRECTORY;
+}
+int fnode_is_file(p_fnode node){
+    return node->type == FNODE_TYPE_FILE;
 }

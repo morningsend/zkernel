@@ -10,7 +10,6 @@ static int timer_id;
 static allocator kernel_allocator;
 static allocator user_allocator;
 static scheduler_t thread_scheduler;
-static fs_table file_open_table;
 
 p_thread create_thread(){
     p_thread th = mem_alloc(&kernel_allocator, sizeof(thread));

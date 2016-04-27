@@ -15,7 +15,7 @@
 
 #define READ_ONLY 0x01
 #define WRITE_ONLY 0x02
-#define READ_WRITE 0x03
+
 
 #define EOF (-1)
 

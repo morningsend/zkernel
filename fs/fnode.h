@@ -36,4 +36,7 @@ void fnode_create_file(p_fnode node, uint32_t fid, uint32_t parent_id, char* nam
 void fnode_add_block(p_fnode node, p_fblock block);
 void fnode_remove_block(p_fnode node, p_fblock block);
 int fnode_name_matches(p_fnode, const char* name);
+
+int fnode_is_dir(p_fnode node);
+int fnode_is_file(p_fnode node);
 #endif //_FNODE_H

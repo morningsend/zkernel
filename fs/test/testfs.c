@@ -4,6 +4,8 @@
 
 #include "testfs.h"
 
+BITMAP_GEN(64)
+
 void test_init(){
     disk_format();
     fs_init();
@@ -136,16 +138,30 @@ void testFnode(){
     test_case_summary();
 
 }
+void testGeneratedBitmap(){
+    bitmap_64 bmap;
+    bitmap_init_64(&bmap);
+    test_case_begin("Macro Generated Bitmap Test Case");
+    assert_int_equal("bitmap_64 should equal to 0", 0, (int) bmap.bits[0]);
+    assert_int_equal("bitmap_64 should have size equal to 8 bytes", 8, sizeof(bitmap_64));
+    bitmap_set_on_64(&bmap, 33);
+    assert_int_equal("bitmap_64 should support set bit position", 2, bmap.bits[1] );
+    assert_int_equal("bitmap_64 should support get bit operation", 1, bitmap_get_64(&bmap,33));
+    test_case_end();
+    test_case_summary();
+}
 void testFBlock(){
 
 }
 void testFile(){
-
+    
 }
 void runFileTests(){
+    testFnode();
     test_init();
     testPathParser();
     testFTree();
     testFTreeWrite();
     testMoveFile();
+    testGeneratedBitmap();
 }

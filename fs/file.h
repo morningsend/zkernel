@@ -7,15 +7,19 @@
 
 #include <stdint-gcc.h>
 #include "fnode.h"
-#include "../libc/iostream.h"
+#include "fstream.h"
 
-#define FILE_TYPE_DIRECTORY
-#define FILE_TYPE_FILE
+#define FILE_READ_ONLY 0x10
+#define FILE_WRITE_ONLY 0x20
+#define APPEND 0x40
+#define READ_WRITE (READ_ONLY | WRITE_ONLY)
+
+#define FILE_SEEK_BEGIN 0x01
+#define FILE_SEEK_END 0x02
+#define FILE_SEEK_CURRENT 0x03
 
 typedef struct file_t file;
 typedef struct file_t* p_file;
-typedef struct directory_t directory;
-typedef struct directory_t* p_directory;
 /**
  * File descriptor.
  * library functions that handles file i/o requires a file descriptor objector as argument
@@ -24,20 +28,16 @@ typedef struct directory_t* p_directory;
 
 struct file_t {
     fnode node;
-    io_stream stream;
-    int open_mode;
-};
-
-struct directory_t{
-    fnode node;
-    uint32_t dir_entry_buffer[16];
+    int flag;
+    int id;
+    fstream stream;
 };
 
 int _fsize(p_file file);
-void _fopen(char* path, int mode, p_file file);
+p_file _fopen(char* path, int mode);
 void _fclose(p_file file);
 int _fread(p_file file, char* buffer, int size);
 void _fwrite(p_file file, char* buffer, int size);
 void _fseek(p_file file, int seek_mode, int offset);
-void _dir_entries(p_directory dir, char** entries, int* argc);
+void _fflush(p_file file);
 #endif //_FILE_H

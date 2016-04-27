@@ -3,38 +3,48 @@
 //
 
 #include "fs.h"
-
-
-
+static fs_table file_open_table;
 void fs_init(){
     int error;
     disk_mount(&error);
     if(error == DISK_UNFORMATTED_ERROR){
         disk_format();
+        disk_mount;
     }else if(error == DISK_NO_ROOT_FOUND){
         disk_format();
+        disk_mount;
     }
+    fs_table_init(&file_open_table);
 }
 void fs_table_init(p_fs_table table){
-    for(int i = 0; i < FILE_TABLE_SIZE; i++){
-        table->file_table[i] = NULL;
-    }
-    table->driver = fs_driver;
+
     table->lock = LOCK_FREE;
 }
-void fs_table_insert(p_fs_table table, p_fs_entry entry){
+
+p_file fs_open_file(char* path, int mode){
+    p_fnode root = ftree_get_root_node();
 
 }
-void fs_table_remove(p_fs_table table, p_fs_entry entry){
+void fs_close_file(p_file file){
 
 }
-void fs_table_get(p_fs_table table, int eid, p_fs_entry entry){
-
-}
-void fs_table_set(p_fs_table table, int eid, p_fs_entry entry){
+void fs_flush_file(p_file file){
 
 }
 
-const fs_operations fs_driver = {
-    
-};
+int fs_read_file(p_file file, char* buf, int size){
+
+}
+void fs_write_file(p_file file, char* buf, int size){
+
+}
+int fs_file_get_size(p_file file){
+
+}
+
+void fs_file_seek(p_file file, int seek_mode, int offset){
+
+}
+void fs_file_flush(p_file file){
+
+}
