@@ -31,12 +31,11 @@ void _bitmap_set_off(void* bmap, uint32_t pos, uint32_t bmap_word_size);
 uint32_t _bitmap_get(void* bmap, uint32_t pos, uint32_t bmap_word_size);
 int _bitmap_scan_first_zero(void* bmap, uint32_t bmap_word_size);
 
-#define BITMAP_GEN(size) BITMAP_GEN_STRUCT(size)\
-                        BITMAP_GEN_INIT_FUNC(size)\
-                        BITMAP_GEN_SET_ON(size)\
-                        BITMAP_GEN_SET_OFF(size)\
-                        BITMAP_GEN_GET(size)\
-                        BITMAP_GEN_SCAN_FIRST_ZERO(size)
+#define BITMAP_GEN_DEF(size) BITMAP_GEN_STRUCT(size)\
+                        BITMAP_GEN_FUNC_PROTO(size)
+
+#define BITMAP_GEN_BODY(size) BITMAP_GEN_FUNC_DEF(size)
+
 
 #define BITMAP_GEN_STRUCT(size) \
     struct bitmap_struct_##size {\
@@ -44,6 +43,19 @@ int _bitmap_scan_first_zero(void* bmap, uint32_t bmap_word_size);
     };\
     typedef struct bitmap_struct_##size bitmap_##size;\
     typedef struct bitmap_struct_##size * p_bitmap_##size;
+
+#define BITMAP_GEN_FUNC_PROTO(size)\
+    void bitmap_init_##size(void* bmap);\
+    void bitmap_set_on_##size ( void* bitmap, uint32_t pos);\
+    void bitmap_set_off_##size (void* bitmap, uint32_t pos);\
+    uint32_t bitmap_get_##size ( void* bitmap, uint32_t pos);\
+    int bitmap_scan_first_zero_##size(void* bitmap);
+
+#define  BITMAP_GEN_FUNC_DEF(size) BITMAP_GEN_INIT_FUNC(size)\
+                                    BITMAP_GEN_SET_ON(size)\
+                                    BITMAP_GEN_SET_OFF(size)\
+                                    BITMAP_GEN_GET(size)\
+                                    BITMAP_GEN_SCAN_FIRST_ZERO(size)
 
 #define BITMAP_GEN_INIT_FUNC(size) void bitmap_init_##size(void* bmap) {\
         memset(bmap, size >> 3 , 0);\
@@ -61,7 +73,7 @@ int _bitmap_scan_first_zero(void* bmap, uint32_t bmap_word_size);
     return _bitmap_get(bitmap, pos, size >> 5);\
 }
 
-#define BITMAP_GEN_SCAN_FIRST_ZERO(size) void bitmap_scan_first_zero_##size(void* bitmap){\
-    _bitmap_scan_first_zero(bitmap, size >> 5);\
+#define BITMAP_GEN_SCAN_FIRST_ZERO(size) int bitmap_scan_first_zero_##size(void* bitmap){\
+    return _bitmap_scan_first_zero(bitmap, size >> 5);\
 }
 #endif //_BITMAP_H

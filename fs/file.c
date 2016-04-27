@@ -5,8 +5,6 @@
 #include "file.h"
 #include "fs.h"
 
-BITMAP_GEN(128)
-
 int _fsize(p_file file){
 
     return fs_file_get_size(file);

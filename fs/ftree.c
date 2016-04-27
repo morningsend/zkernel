@@ -63,6 +63,13 @@ int ftree_traverse_from(p_fnode node, char* path, p_fnode result){
     ftree_traverse_finally:
         return found;
 }
+int ftree_traverse_path_from(p_fnode node, char** parts, int count, p_fnode result){
+    return 0;
+}
+int ftree_traverse_path_from_root(p_fnode node, char** parts, int count, p_fnode result){
+    p_fnode root = ftree_get_root_node();
+    return ftree_traverse_path_from(root, parts, count, result);
+}
 int ftree_find_node_match_name_in_dir(p_fnode node, char *name, p_fnode result){
     fblock block_buffer;
     fnode node_buffer;
@@ -235,7 +242,7 @@ int ftree_dir_get_file_count(p_fnode node){
     if(node->type == FNODE_TYPE_DIRECTORY){
         return (int) node->files_in_dir;
     }else {
-        return 0;
+
     }
 }
 void ftree_file_write_bytes(p_fnode node, char* bytes, uint32_t size){
@@ -323,4 +330,15 @@ void ftree_dir_delete_recursive(p_fnode node){
 }
 int ftree_file_read(p_fnode node, char* buffer, uint32_t size){
 
+}
+
+void ftree_node_commit(p_fnode node){
+    write_fnode(node);
+}
+void ftree_block_commit(p_fblock block){
+    write_data_block(block);
+}
+
+void ftree_block_read(uint32_t block_id, p_fblock block){
+    read_data_block(block_id, block);
 }

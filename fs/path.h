@@ -9,7 +9,7 @@
 #define PATH_MAXIMUM_LEVEL 16
 
 void parse_path(char* path, char** parts, int n, int* parts_count);
-
+void path_get_file_name(char* path,  char* buffer, int length);
 
 
 #endif //_PATH_H

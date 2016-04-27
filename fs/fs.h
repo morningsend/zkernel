@@ -10,9 +10,10 @@
 #include "fstream.h"
 #define FILE_TABLE_SIZE 64
 
-
-
-#define def_func(name, a) int name(){ return a;}
+#ifndef BITMAP_64
+#define BITMAP_64
+BITMAP_GEN_DEF(64)
+#endif
 
 typedef struct fs_table fs_table;
 typedef struct fs_table* p_fs_table;
@@ -21,6 +22,7 @@ struct file_t;
 struct fs_table{
     struct file_t file_table[FILE_TABLE_SIZE];
     uint32_t lock;
+    bitmap_64 ft_alloc_map;
 };
 
 void fs_init();
@@ -36,5 +38,4 @@ int fs_file_get_size(p_file file);
 
 void fs_file_seek(p_file file, int seek_mode, int offset);
 
-void fs_file_flush(p_file file);
 #endif //_FS_H

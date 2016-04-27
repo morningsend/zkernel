@@ -14,11 +14,16 @@ typedef struct fstream fstream;
 typedef struct fstream* p_fstream;
 struct fstream {
     int offset;
-    char buffer[BLOCK_FILE_MAX_BYTE_COUNT];
+    fblock buffer;
     int flag;
     int block_num;
-    int block_count;
+    uint32_t* block_count;
+    uint32_t* blocks;
 };
+
+void fstream_commit_read_block(p_fstream stream);
+int fstream_has_more_block(p_fstream stream);
+void fstream_init(p_fstream stream, p_fnode node);
 
 
 #endif //_FILE_STREAM_H

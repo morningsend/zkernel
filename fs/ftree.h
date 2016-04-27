@@ -29,6 +29,9 @@ struct ftree_t{
 p_fnode ftree_get_root_node();
 int ftree_traverse_from_root(char* path, p_fnode result);
 int ftree_traverse_from(p_fnode node, char* path, p_fnode result);
+int ftree_traverse_path_from(p_fnode node, char** parts, int count, p_fnode result);
+int ftree_traverse_path_from_root(p_fnode node, char** parts, int count, p_fnode result);
+
 void ftree_insert_node_at(p_fnode node, p_fnode leaf);
 void ftree_delete_node_at(p_fnode node);
 void ftree_delete_recursive(p_fnode node);
@@ -45,7 +48,10 @@ void ftree_dir_delete(p_fnode node);
 int ftree_dir_get_file_count(p_fnode node);
 void ftree_node_detach_child(p_fnode parent, p_fnode child);
 
+void ftree_node_commit(p_fnode node);
+void ftree_block_commit(p_fblock block);
 void ftree_file_write_bytes(p_fnode node, char* bytes, uint32_t size);
+void ftree_block_read(uint32_t block_id, p_fblock block);
 #endif //_FTREE_H
 
 

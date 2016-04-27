@@ -235,3 +235,16 @@ char* skip_non_ws(char* string){
     }
     return string;
 }
+void strsubn(char* str, int begin, int length, char* buf){
+    char* end = str + length -1 ;
+    for(char* c = str+begin; c != end && *c != '\0'; c++, buf++){
+        *buf = *c;
+    }
+    *buf = '\0';
+}
+void strsub(char* str, int begin, char* buf){
+    for(char* c = str+begin; *c != '\0'; c++, buf++){
+        * buf = * c;
+    }
+    *buf = '\0';
+}

@@ -32,4 +32,8 @@ char* skip_ws(char* string);
 char* skip_non_ws(char* string);
 char* skip_char_match(char ch, char* str);
 char* skip_char_not_match(char ch, char* str);
+
+void strsubn(char* str, int begin, int length, char* buf);
+void strsub(char* str, int begin, char* buf);
+
 #endif //_STRING_H

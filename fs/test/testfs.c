@@ -4,8 +4,6 @@
 
 #include "testfs.h"
 
-BITMAP_GEN(64)
-
 void test_init(){
     disk_format();
     fs_init();
@@ -154,7 +152,7 @@ void testFBlock(){
 
 }
 void testFile(){
-    
+
 }
 void runFileTests(){
     testFnode();
