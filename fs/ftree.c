@@ -242,7 +242,15 @@ int ftree_dir_get_file_count(p_fnode node){
     if(node->type == FNODE_TYPE_DIRECTORY){
         return (int) node->files_in_dir;
     }else {
-
+        return -1;
+    }
+}
+int ftree_file_get_file_size(p_fnode node){
+    if(node->type == FNODE_TYPE_FILE){
+        return (int) node->filesize;
+    }
+    else {
+        return -1;
     }
 }
 void ftree_file_write_bytes(p_fnode node, char* bytes, uint32_t size){

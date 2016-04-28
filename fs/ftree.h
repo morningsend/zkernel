@@ -47,6 +47,7 @@ void ftree_file_delete_data(p_fnode node, int zero_out);
 void ftree_dir_delete(p_fnode node);
 int ftree_dir_get_file_count(p_fnode node);
 void ftree_node_detach_child(p_fnode parent, p_fnode child);
+int ftree_file_get_file_size(p_fnode node);
 
 void ftree_node_commit(p_fnode node);
 void ftree_block_commit(p_fblock block);

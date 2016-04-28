@@ -56,10 +56,10 @@ p_file fs_open_file(char* path, int mode){
 }
 void fs_close_file(p_file file){
     mutex_spinlock(&file_open_table.lock);
-    int index = (file - file_open_table.file_table);
+    int index = (int) (file - file_open_table.file_table);
     if(bitmap_get_64(&file_open_table.ft_alloc_map, index)){
         fs_flush_file(file);
-        bitmap_set_off(&file_open_table.file_table, index);
+        bitmap_set_off_64(&file_open_table.file_table, index);
     }
     mutex_unlock(&file_open_table.lock);
 }
@@ -88,12 +88,29 @@ int fs_read_file(p_file file, char* buf, int size){
     return size;
 }
 void fs_write_file(p_file file, char* buf, int size){
-
+    p_fstream stream = & file->stream;
+    
 }
 int fs_file_get_size(p_file file){
-
+    return ftree_file_get_file_size(&file->node);
 }
 
 void fs_file_seek(p_file file, int seek_mode, int offset){
-
+    p_fstream stream = &file->stream;
+    int currentPos = stream->block_num * BLOCK_FILE_MAX_BYTE_COUNT + stream->offset;
+    switch(seek_mode){
+        case FILE_SEEK_BEGIN:
+            currentPos = 0 + offset;
+            break;
+        case FILE_SEEK_CURRENT:
+            currentPos += offset;
+            break;
+        case FILE_SEEK_END:
+            currentPos = (int) file->node.filesize;
+            currentPos += offset;
+            break;
+        default:
+            break;
+    }
+    fstream_seek_to_pos(stream, currentPos);
 }

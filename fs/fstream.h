@@ -24,6 +24,6 @@ struct fstream {
 void fstream_commit_read_block(p_fstream stream);
 int fstream_has_more_block(p_fstream stream);
 void fstream_init(p_fstream stream, p_fnode node);
-
+int fstream_seek_to_pos(p_fstream stream, int currentPos);
 
 #endif //_FILE_STREAM_H

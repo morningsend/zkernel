@@ -26,5 +26,5 @@ void _fseek(p_file file, int seek_mode, int offset){
     fs_file_seek(file, seek_mode, offset);
 }
 void _fflush(p_file file){
-    fs_file_flush(file);
+    fs_flush_file(file);
 }
