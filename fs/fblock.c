@@ -51,3 +51,26 @@ void block_dir_remove_entry(p_fblock block, p_fnode entry){
         }
     }
 }
+
+void block_data_write(p_fblock block, int begin, char *buf, int size){
+    int end;
+    if(begin < 0 || size < 1) return;
+    if(block->header.type == BLOCK_TYPE_DATA){
+        end = begin + size;
+        if(end > BLOCK_FILE_MAX_BYTE_COUNT)
+            end = BLOCK_FILE_MAX_BYTE_COUNT;
+        memcpy(block->payload.data_block.data+begin, buf, end - begin);
+        if(end > block->payload.data_block.size)
+            block->payload.data_block.size = (uint32_t) end;
+    }
+}
+int block_read_to_buffer(p_fblock block, int begin, char* buf, int size){
+    int end;
+    if(begin < 0 || size < 1) return;
+    if(block->header.type == BLOCK_TYPE_DATA){
+        end = begin + size;
+        end = (end > block->payload.data_block.size)? (int) block->payload.data_block.size : end;
+        memcpy(buf, block->payload.data_block.data+begin, end - begin);
+    }
+    return end - begin;
+}

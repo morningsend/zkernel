@@ -332,14 +332,12 @@ void ftree_dir_delete(p_fnode node){
         write_alloc_tables();
     }
 }
+void ftree_file_expand(){
 
+}
 void ftree_dir_delete_recursive(p_fnode node){
     if(node->fid == ROOT_NODE_ID) disk_format();
 }
-int ftree_file_read(p_fnode node, char* buffer, uint32_t size){
-
-}
-
 void ftree_node_commit(p_fnode node){
     write_fnode(node);
 }
@@ -349,4 +347,8 @@ void ftree_block_commit(p_fblock block){
 
 void ftree_block_read(uint32_t block_id, p_fblock block){
     read_data_block(block_id, block);
+}
+
+int ftree_file_get_block_capacity(p_fnode node){
+    return (int) node->block_count * BLOCK_FILE_MAX_BYTE_COUNT;
 }

@@ -53,6 +53,8 @@ void ftree_node_commit(p_fnode node);
 void ftree_block_commit(p_fblock block);
 void ftree_file_write_bytes(p_fnode node, char* bytes, uint32_t size);
 void ftree_block_read(uint32_t block_id, p_fblock block);
+
+int ftree_file_get_block_capacity(p_fnode node);
 #endif //_FTREE_H
 
 

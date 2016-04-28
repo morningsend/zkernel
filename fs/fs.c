@@ -70,26 +70,18 @@ void fs_flush_file(p_file file){
 
 int fs_read_file(p_file file, char* buf, int size){
 
-    int available = file->node.filesize -(file->stream.block_num*BLOCK_FILE_MAX_BYTE_COUNT)- (file->stream.offset);
+    p_fstream stream = &file->stream;
+    int available = fstream_get_available_bytes(stream, file->node.filesize);
 
     if(size < 1) return 0;
     else if(available < size) size = available;
-    p_fstream stream = &file->stream;
-    int need_to_read = size;
-    int offset = stream->offset;
-    while(need_to_read > 0){
-        if(offset < BLOCK_FILE_MAX_BYTE_COUNT) {
-            *buf = stream->buffer.payload.data_block.data[offset];
-            offset ++;
-        }else{
 
-        }
-    }
-    return size;
+    return fstream_read(stream, buf, size);
+
 }
 void fs_write_file(p_file file, char* buf, int size){
     p_fstream stream = & file->stream;
-    
+    fstream_write(stream, buf, size);
 }
 int fs_file_get_size(p_file file){
     return ftree_file_get_file_size(&file->node);

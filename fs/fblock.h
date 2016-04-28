@@ -37,6 +37,11 @@ struct block_directory_entry_t{
     uint32_t count;
     uint32_t nodes[BLOCK_DIRECTORY_ENTRY_MAX_COUNT];
 };
+
+
+typedef struct fblock_t fblock;
+typedef struct fblock_t* p_fblock;
+typedef union block_payload block_payload;
 typedef struct block_data_t block_data;
 typedef struct block_data_t* p_block_data;
 
@@ -44,11 +49,6 @@ struct block_data_t {
     uint32_t size;
     char data[BLOCK_FILE_MAX_BYTE_COUNT];
 };
-
-
-typedef struct fblock_t fblock;
-typedef struct fblock_t* p_fblock;
-typedef union block_payload block_payload;
 union block_payload{
     block_data data_block;
     block_directory_entry dir_block;
@@ -65,4 +65,6 @@ int block_is_dir_block_empty(p_fblock block);
 void block_dir_add_entry(p_fblock block, p_fnode entry);
 
 void block_dir_remove_entry(p_fblock block, p_fnode entry);
+void block_data_write(p_fblock block, int start, char* buf, int size);
+int block_read_to_buffer(p_fblock block, int offset, char* buf, int size);
 #endif //_FBLOCK_H

@@ -25,5 +25,8 @@ void fstream_commit_read_block(p_fstream stream);
 int fstream_has_more_block(p_fstream stream);
 void fstream_init(p_fstream stream, p_fnode node);
 int fstream_seek_to_pos(p_fstream stream, int currentPos);
-
+int fstream_write(p_fstream stream, char* buf, int size);
+int fstream_read(p_fstream stream, char* buf, int size);
+int fstream_get_available_bytes(p_fstream stream, uint32_t filesize);
+int fstream_is_eof(p_fstream stream);
 #endif //_FILE_STREAM_H
