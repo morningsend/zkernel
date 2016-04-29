@@ -71,7 +71,9 @@ void disk_format(){
     int block_id = disk_allocate_block();
 
     block_create_type_dir(&block_buffer, (uint32_t) block_id);
-    fnode_add_block(&root_node, &block_buffer);
+    root_node.blocks[0] = block_id;
+    root_node.block_capacity = 1;
+    root_node.block_used_count = 1;
     write_data_block(&block_buffer);
     write_disk_header(&disk_header);
     write_alloc_tables();
@@ -128,12 +130,8 @@ void write_data_block(p_fblock block){
     uint32_t addr = block->header.id + DATA_BLOCK_BEGIN;
     disk_wr(addr, (uint8_t *)block, BLOCK_SIZE_BYTES);
 }
-void get_fnode_by_path(const char* path, p_fnode node){
-
-}
 void get_fnode_in_dir(p_fnode dir_node ,p_fnode buf[], int size){
     read_fnode(dir_node->fid, &node_buffer);
-
 }
 int get_dir_entries_count(p_fnode node){
     if(node->type == FNODE_TYPE_DIRECTORY) {

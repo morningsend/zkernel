@@ -85,13 +85,13 @@ void testFTreeWrite(){
     fnode node_txt_file;
 
     test_case_begin("File writing test case");
-    ftree_create_file_at(root_node, path, 0,&node_txt_file );
+    ftree_create_file_at(root_node, path, 1,&node_txt_file );
 
     ftree_file_write_bytes(&node_txt_file, data, strlen(data));
     read_fnode(node_txt_file.fid, &node_txt_file);
 
     assert_int_equal("Writing 'hello world' to file will change file size to strlen(hello world)",strlen(data), node_txt_file.filesize );
-    assert_int_equal("test.txt will need 1 block to store 'hello world'", 1, node_txt_file.block_count);
+    assert_int_equal("test.txt will need 1 block to store 'hello world'", 1, node_txt_file.block_used_count);
     int fid = node_txt_file.fid;
     int bid = node_txt_file.blocks[0];
     ftree_delete_node_at(&node_txt_file);
@@ -133,13 +133,15 @@ void testFnode(){
 
     fnode_create_file(&node, 1,0,"hello");
     block_create_type_data(&block, 33, "world", 5);
-
     test_case_begin("FNode test case");
     assert_string_equal("node should have name hello", "hello", node.name);
     fnode_add_block(&node, &block);
-    assert_int_equal("node should have one block", 1, node.block_count);
+    assert_int_equal("node should have one block", 1, node.block_used_count);
     assert_int_equal("node should have block with id 33", 33, node.blocks[0]);
-
+    assert_int_equal("node should have capacity of 1", 1, node.block_capacity);
+    fnode_remove_block(&node, &block);
+    assert_int_equal("after remove block, node should have capacity of 0", 0, node.block_capacity);
+    assert_int_equal("after remove block, node should have one block used", 0, node.block_used_count);
     test_case_end();
     test_case_summary();
 }
@@ -155,19 +157,34 @@ void testGeneratedBitmap(){
     test_case_end();
     test_case_summary();
 }
-void testFBlock(){
-
-}
 void testFileReadWrite(){
     disk_format();
     fs_init();
-    p_file fp = fs_open_file("/hello.txt", WRITE_ONLY | FILE_CREATE);
+    char buffer[20] = "0123456789";
+    char fname[] = "/hello2.txt";
+    int len = strlen(buffer);
     test_case_begin("File Open Read Write Close function test case");
-
+    p_file fp = _fopen(fname, FILE_WRITE_ONLY | FILE_CREATE);
     assert_true("file pointer fp should not be null", fp != NULL);
+    assert_int_equal("file will have size 0", 0, _fsize(fp));
+    assert_int_equal("file cursor is at position 0", 0, _ftell(fp));
+    _fwrite(fp, buffer, len);
+    assert_int_equal("file cursor is at position 10", len, _ftell(fp));
+    _fclose(fp);
+    strcpy(fname, "/hello2.txt");
+    fp = _fopen(fname, FILE_READ_ONLY);
+    assert_true("hello2.txt exist on the file system, fp != null", fp != NULL);
+
+    memset(buffer, 20, 0);
+    int chars_read = _fread(fp, buffer, 20);
+
+    buffer[chars_read] = '\0';
+    _fclose(fp);
+    assert_int_equal("file size of hello2.txt should equal to length of string written", len, _fsize(fp));
+    assert_int_equal("chars read equals to length of string written", len, chars_read);
+    assert_string_equal("written 0123456789, should get back 0123456789", "0123456789", buffer);
     test_case_end();
     test_case_summary();
-
 }
 void runFileTests(){
     testFnode();
@@ -177,4 +194,5 @@ void runFileTests(){
     testFTreeWrite();
     testMoveFile();
     testGeneratedBitmap();
+    testFileReadWrite();
 }

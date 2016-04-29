@@ -65,7 +65,7 @@ void testDiskFormat(){
     fblock block;
     assert_int_equal("newly formatted disk should not have error when mounted", error, DISK_MOUNT_OK);
     assert_true("new formatted root should have id ROOT_NOTE_ID", ROOT_NODE_ID == root->fid);
-    assert_int_equal("root node should have a single block", 1, root->block_count);
+    assert_int_equal("root node should have a single block", 1, root->block_used_count);
 
     test_case_end();
     test_case_summary();

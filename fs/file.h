@@ -42,5 +42,8 @@ void _fclose(p_file file);
 int _fread(p_file file, char* buffer, int size);
 void _fwrite(p_file file, char* buffer, int size);
 void _fseek(p_file file, int seek_mode, int offset);
+int _ftell(p_file file);
 void _fflush(p_file file);
+void file_init(p_file file, p_fnode node, int id, int flag);
+int _mkdir(char*path);
 #endif //_FILE_H

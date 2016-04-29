@@ -16,7 +16,7 @@ SECTIONS {
   .data : {                           *(.data        ) } 
   /* place bss  segment(s)       */        
   .bss  : {                           *(.bss         ) }
-  stack_size = 0x1000;
+  stack_size = 0x8000;
   /* align  address (per AAPCS)  */
   .       = ALIGN(8);        
   /* allocate stack for irq mode */

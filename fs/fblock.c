@@ -54,7 +54,7 @@ void block_dir_remove_entry(p_fblock block, p_fnode entry){
 
 void block_data_write(p_fblock block, int begin, char *buf, int size){
     int end;
-    if(begin < 0 || size < 1) return;
+    if(begin <= -1 || size < 1) return;
     if(block->header.type == BLOCK_TYPE_DATA){
         end = begin + size;
         if(end > BLOCK_FILE_MAX_BYTE_COUNT)
@@ -66,7 +66,7 @@ void block_data_write(p_fblock block, int begin, char *buf, int size){
 }
 int block_read_to_buffer(p_fblock block, int begin, char* buf, int size){
     int end;
-    if(begin < 0 || size < 1) return;
+    if(begin <= -1 || size < 1) return 0;
     if(block->header.type == BLOCK_TYPE_DATA){
         end = begin + size;
         end = (end > block->payload.data_block.size)? (int) block->payload.data_block.size : end;
