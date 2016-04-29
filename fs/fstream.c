@@ -87,7 +87,10 @@ int fstream_read(p_fstream stream, char* buf, int size){
         }
     }
     read = need_to_read > 0 ? size - need_to_read: size;
-    read = read == 0 ? FILE_STREAM_EOF : read;
+    if(read == 0){
+        stream->flag = FILE_STREAM_EOF;
+        read = -1;
+    }
     return read;
 }
 int fstream_get_available_bytes(p_fstream stream, uint32_t filesize){

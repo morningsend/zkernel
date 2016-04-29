@@ -12,6 +12,9 @@ int ftree_traverse_from_root(char* path, p_fnode result){
     found = ftree_traverse_from(root, path, result);
     return found;
 }
+int ftree_refresh_root_node(){
+    read_root_dir();
+}
 p_fnode ftree_get_root_node(){
     return disk_get_root_node();
 }
@@ -27,13 +30,17 @@ int ftree_traverse_from(p_fnode node, char* path, p_fnode result){
     if(node->type != FNODE_TYPE_DIRECTORY) {
         return NOT_FOUND;
     }
+
+    char* parts[PATH_MAXIMUM_LEVEL];
+    int part_count;
+    parse_path(path, parts, PATH_MAXIMUM_LEVEL, &part_count);
+    return ftree_traverse_path_from(node, parts, part_count, result);
+}
+int ftree_traverse_path_from(p_fnode node, char** parts, int part_count, p_fnode result){
     int found = NOT_FOUND;
     fnode node_buffer;
     fnode current_node = *node;
     fblock block_buffer;
-    char* parts[PATH_MAXIMUM_LEVEL];
-    int part_count;
-    parse_path(path, parts, PATH_MAXIMUM_LEVEL, &part_count);
     int dir_levels = part_count - 1;
     for(int i = 0; i < dir_levels; i++){
         if(current_node.type == FNODE_TYPE_DIRECTORY) {
@@ -57,14 +64,11 @@ int ftree_traverse_from(p_fnode node, char* path, p_fnode result){
     else goto ftree_traverse_finally;
 
     ftree_traverse_found:
-        found = FOUND;
-        *result = node_buffer;
+    found = FOUND;
+    *result = node_buffer;
 
     ftree_traverse_finally:
-        return found;
-}
-int ftree_traverse_path_from(p_fnode node, char** parts, int count, p_fnode result){
-    return 0;
+    return found;
 }
 int ftree_traverse_path_from_root(p_fnode node, char** parts, int count, p_fnode result){
     p_fnode root = ftree_get_root_node();

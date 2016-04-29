@@ -109,13 +109,21 @@ void testMoveFile(){
     char dir1_name[32] = "dir1";
     char dir2_name[32] = "dir2";
     char file_name[32] = "file.txt";
-    fnode node;
+    fnode node1;
+    fnode node2;
+    int file_count = (int) root_node->files_in_dir;
     ftree_create_dir_at(root_node, dir1_name, 1, NULL);
     ftree_create_dir_at(root_node, dir2_name, 1, NULL);
     ftree_create_file_at(root_node, file_name,1, NULL);
     read_root_dir();
     test_case_begin("ftree file moving test case");
-    assert_int_equal("root node has 3 files",3,root_node->files_in_dir );
+    assert_int_equal("root node has 3 files",file_count+3,root_node->files_in_dir );
+    ftree_traverse_from_root("/dir1", &node1);
+    ftree_traverse_from_root("file.txt", &node2);
+    ftree_move_node(&node2, &node1);
+    ftree_refresh_root_node();
+    root_node = ftree_get_root_node();
+    assert_int_equal("root node have 1 less file", file_count + 2, root_node->files_in_dir);
     test_case_end();
     test_case_summary();
 }
@@ -134,7 +142,6 @@ void testFnode(){
 
     test_case_end();
     test_case_summary();
-
 }
 void testGeneratedBitmap(){
     bitmap_64 bmap;
@@ -151,7 +158,15 @@ void testGeneratedBitmap(){
 void testFBlock(){
 
 }
-void testFile(){
+void testFileReadWrite(){
+    disk_format();
+    fs_init();
+    p_file fp = fs_open_file("/hello.txt", WRITE_ONLY | FILE_CREATE);
+    test_case_begin("File Open Read Write Close function test case");
+
+    assert_true("file pointer fp should not be null", fp != NULL);
+    test_case_end();
+    test_case_summary();
 
 }
 void runFileTests(){

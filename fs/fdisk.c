@@ -121,7 +121,7 @@ void write_fnode(p_fnode node){
     uint32_t block_addr = FNODE_BLOCK_BEGIN + node->fid/FNODE_PER_BLOCK;
     int offset = FNODE_ALIGN_SIZE * (node->fid % FNODE_PER_BLOCK) ;
     disk_rd(block_addr, raw_block_buffer, BLOCK_SIZE_BYTES);
-    *(p_fnode)(raw_block_buffer + offset) = *node;
+    memcpy(raw_block_buffer+offset, node, sizeof(fnode));
     disk_wr(block_addr, raw_block_buffer, BLOCK_SIZE_BYTES);
 }
 void write_data_block(p_fblock block){

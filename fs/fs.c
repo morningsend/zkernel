@@ -40,19 +40,49 @@ void fs_table_init(p_fs_table table){
 }
 
 p_file fs_open_file(char* path, int mode){
-    p_fnode root = ftree_get_root_node();
+    mutex_spinlock(&file_open_table.lock);
+    int fp_index = fs_table_allocate( & file_open_table);
+    if(fp_index < 0) return NULL;
+
+    p_file fp = NULL;
+    fp = &file_open_table.file_table[fp_index];
+
     char* parts[16];
     int count = 0;
+    p_fnode root = ftree_get_root_node();
     fnode parent_dir;
+    fnode open_node;
     parse_path(path, parts, 16, &count);
-    mutex_spinlock(&file_open_table.lock);
+    char** filename = parts + count - 1;
+
     int found = ftree_traverse_path_from(root, parts, count -1,&parent_dir);
+    if(! found)
+        goto error;
+    found = ftree_traverse_path_from(root, filename, 1, &open_node);
+    if(found && open_node.type == FNODE_TYPE_DIRECTORY){
+        goto error;
+    }else if(!(found ||( mode & FILE_CREATE )))
+        goto error;
+    else if(!found && (mode & FILE_CREATE))
+        ftree_create_file_at(&parent_dir, *filename, 1, &open_node);
+    else if(found && (mode & FILE_CREATE)){
+        ftree_delete_node_at(&open_node);
+        ftree_create_file_at(&parent_dir, *filename, 1, &open_node);
+    }
+    fp->flag = mode;
+    fp->id = fp_index;
+    fp->node = open_node;
+    fstream_init(&fp->stream, &fp->node);
 
+    finally:
+        mutex_unlock(&file_open_table.lock);
+    return fp;
 
+    error:
+        fs_table_free(&file_open_table, fp_index);
+        fp = NULL;
+    goto finally;
 
-
-    mutex_unlock(&file_open_table.lock);
-    return NULL;
 }
 void fs_close_file(p_file file){
     mutex_spinlock(&file_open_table.lock);
