@@ -10,6 +10,8 @@
 #include "P1.h"
 #include "P2.h"
 #include "../system/syslib.h"
+#include "../system/demo.h"
+#include "../libc/fileio.h"
 int shell_main(int argc, char* argv[]);
 void command(char** options, int argc);
 void parse_input(char* line, char** args, int n, int* argc);

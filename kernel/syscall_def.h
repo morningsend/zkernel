@@ -18,7 +18,8 @@
 #define SYSTEM_CALL_8 8
 #define SYSTEM_CALL_9 9
 #define SYSTEM_CALL_10 10
-
+#define SYSTEM_CALL_11 11
+#define SYSTEM_CALL_12 12
 #define SYSCALL_Default SYSTEM_CALL_0
 #define SYSCALL_Exit SYSTEM_CALL_1
 #define SYSCALL_Fork SYSTEM_CALL_2
@@ -27,4 +28,5 @@
 #define SYSCALL_Read SYSTEM_CALL_5
 #define SYSCALL_Write SYSTEM_CALL_6
 #define SYSCALL_Gettid SYSTEM_CALL_7
+#define SYSCALL_RunMultiThreadDemo SYSTEM_CALL_8
 #endif //_SYSCALL_DEF_H

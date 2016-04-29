@@ -105,7 +105,7 @@ set(RELEASE_SOURCE_FILES
         kernel/mutex.c
         kernel/mutex.h
         fs/fstream.c
-        fs/fstream.h)
+        fs/fstream.h system/demo.c system/demo.h libc/fileio.c libc/fileio.h)
 
 set(OUTPUT_PATH "${CMAKE_SOURCE_DIR}/build/")
 

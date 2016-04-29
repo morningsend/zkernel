@@ -58,6 +58,7 @@ void testPathParser(){
     char* parts[PATH_MAXIMUM_LEVEL];
     test_case_begin("Path parser test case");
     char path[128] = "/home/dir/abc.txt";
+    char path2[128];
     parse_path(path, parts, PATH_MAXIMUM_LEVEL, &count);
     assert_int_equal("/home/dir/abc.txt should be parsed to 3 parts", 3, count);
     assert_string_equal("part 1 should be home", "home", parts[0]);
@@ -73,6 +74,12 @@ void testPathParser(){
     parse_path(path, parts, PATH_MAXIMUM_LEVEL, &count);
     assert_int_equal("path with no slashes should parsed as one file", 1, count);
     assert_string_equal("parsing 'home' should produce 'home'", "home", parts[0]);
+    strcpy(path, "/hello");
+    path_resolve(path, "world",path2);
+    assert_string_equal("path resolve joins path together", path2, "/hello/world");
+    strcpy(path, "/hello");
+    path_resolve(path, "/world",path2);
+    assert_string_equal("path starts with / will be resolve relative to root", path2, "/world");
     test_case_end();
     test_case_summary();
 }

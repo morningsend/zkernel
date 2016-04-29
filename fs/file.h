@@ -46,4 +46,6 @@ int _ftell(p_file file);
 void _fflush(p_file file);
 void file_init(p_file file, p_fnode node, int id, int flag);
 int _mkdir(char*path);
+int _fexists(char*path);
+int _dir_exists(char* path);
 #endif //_FILE_H

@@ -181,22 +181,17 @@ int fs_create_dir(char* path){
     char* parts[PATH_MAXIMUM_LEVEL];
     int count = 0;
     parse_path(path, parts, PATH_MAXIMUM_LEVEL, &count);
-    char* dirname = parts[count - 1];
+    char* filename = parts[count - 1];
 
     p_fnode root = ftree_get_root_node();
     fnode parent_dir;
     fnode new_dir;
-    parse_path(path, parts, 16, &count);
-    char* filename = parts[count - 1];
-
     found = ftree_traverse_path_from(root, parts, count -1,&parent_dir);
     if(! found)
         goto error;
     if(ftree_find_node_match_name_in_dir(&parent_dir, filename, &new_dir))
         goto error;
-
     ftree_create_dir_at(&parent_dir, filename, 1, &new_dir);
-
 
     finally:
         return found;
@@ -204,3 +199,17 @@ int fs_create_dir(char* path){
         found = NOT_FOUND;
         goto finally;
 }
+
+int fs_file_exists(char* path){
+    fnode node;
+    return ftree_traverse_from_root(path, &node);
+}
+int fs_dir_exists(char* path) {
+    fnode node;
+    int found = ftree_traverse_from_root(path, &node);
+    if (found) {
+        found = node.type == FNODE_TYPE_FILE ? NOT_FOUND : FOUND;
+    }
+    return found;
+}
+

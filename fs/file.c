@@ -44,3 +44,10 @@ void file_init(p_file fp, p_fnode node, int id, int flag){
 int _mkdir(char*path){
     fs_create_dir(path);
 }
+
+int _fexists(char*path){
+    return fs_file_exists(path);
+}
+int _dir_exists(char* path){
+    return fs_dir_exists(path);
+}

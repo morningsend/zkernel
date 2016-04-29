@@ -30,7 +30,7 @@ p_fnode ftree_get_root_node();
 int ftree_traverse_from_root(char* path, p_fnode result);
 int ftree_traverse_from(p_fnode node, char* path, p_fnode result);
 int ftree_traverse_path_from(p_fnode node, char** parts, int count, p_fnode result);
-int ftree_traverse_path_from_root(p_fnode node, char** parts, int count, p_fnode result);
+int ftree_traverse_path_from_root(char** parts, int count, p_fnode result);
 
 void ftree_insert_node_at(p_fnode parent, p_fnode leaf);
 void ftree_delete_node_at(p_fnode node);
@@ -58,7 +58,7 @@ int ftree_node_get_block_capacity(p_fnode node);
 int ftree_dir_get_capacity(p_fnode node);
 int ftree_node_expand_block_capacity(p_fnode node, int capacity);
 int ftree_node_shrink_block_capacity(p_fnode node, int capacity);
-
+int ftree_preallocate_block(int type, p_fnode node, int n);
 int ftree_file_get_data_capacity(p_fnode node);
 #endif //_FTREE_H
 

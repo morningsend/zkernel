@@ -39,4 +39,7 @@ int fs_file_get_size(p_file file);
 void fs_file_seek(p_file file, int seek_mode, int offset);
 int fs_file_tell(p_file file);
 int fs_create_dir(char* path);
+
+int fs_file_exists(char* path);
+int fs_dir_exists(char* path);
 #endif //_FS_H

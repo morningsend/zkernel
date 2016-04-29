@@ -75,7 +75,7 @@ int ftree_traverse_path_from(p_fnode node, char** parts, int part_count, p_fnode
     ftree_traverse_finally:
     return found;
 }
-int ftree_traverse_path_from_root(p_fnode node, char** parts, int count, p_fnode result){
+int ftree_traverse_path_from_root( char** parts, int count, p_fnode result){
     p_fnode root = ftree_get_root_node();
     return ftree_traverse_path_from(root, parts, count, result);
 }
@@ -184,7 +184,7 @@ int ftree_node_find_dir_block_with_space(p_fnode node, p_fblock block){
     return NOT_FOUND;
 };
 
-int ftree_preallocate_block(p_fnode node, int n){
+int ftree_preallocate_block(int type, p_fnode node, int n){
     int allocate_count = 0;
     if(n > FNODE_MAX_BLOCK_CAPACITY) n = FNODE_MAX_BLOCK_CAPACITY;
     fblock block;
@@ -194,7 +194,10 @@ int ftree_preallocate_block(p_fnode node, int n){
         if(bid > -1){
             allocate_count++;
             node->blocks[i] =(uint32_t) bid;
-            block_create_type_data(&block, bid, NULL, 0);
+            if(type == BLOCK_TYPE_DATA)
+                block_create_type_data(&block, bid, NULL, 0);
+            else if(type == BLOCK_TYPE_DIRECTORY_ENTRY)
+                block_create_type_dir(&block, bid);
             write_data_block(&block);
         }else {
             break;
@@ -218,7 +221,7 @@ int ftree_create_dir_at(p_fnode parent, char *name, int preallocate, p_fnode out
             fnode_create_dir(&node, fid, parent->fid, name);
             write_fnode(&node);
             ftree_insert_node_at(parent, &node);
-            ftree_preallocate_block(&node, preallocate);
+            ftree_preallocate_block(BLOCK_TYPE_DIRECTORY_ENTRY, &node, preallocate);
             error = OK;
             if(out != NULL){
                 *out = node;
@@ -238,7 +241,7 @@ int ftree_create_file_at(p_fnode parent, char* name, int preallocate, p_fnode ou
             fnode_create_file(&node, fid, parent->fid, name);
             write_fnode(&node);
             ftree_insert_node_at(parent, &node);
-            ftree_preallocate_block(&node, preallocate);
+            ftree_preallocate_block(BLOCK_TYPE_DATA, &node, preallocate);
             if(out != NULL){
                 *out = node;
             }

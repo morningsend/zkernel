@@ -193,7 +193,7 @@ void str_splt_ws(char* str, char** parts, int n, int* part_count){
             parts++;
             c = skip_non_ws(c);
         }
-    }while(* c != '\0' && count < n);
+    }while(*c != '\0' && count < n);
 
     *part_count = count;
 }

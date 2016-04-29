@@ -11,5 +11,5 @@
 void parse_path(char* path, char** parts, int n, int* parts_count);
 void path_get_file_name(char* path,  char* buffer, int length);
 
-
+void path_resolve(char* parent_path, char* path, char* result);
 #endif //_PATH_H

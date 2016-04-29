@@ -1,6 +1,6 @@
 #include "kernel.h"
 #define MULTITASKING 1
-#define KERNEL_TESTING 1
+//#define KERNEL_TESTING 0
 
 #ifdef KERNEL_TESTING
 #include "test/kernel_tests.h"
@@ -155,6 +155,13 @@ void kernel_syscall_dispatch(context* exec_context){
             th = scheduler_get_current_thread(&thread_scheduler);
             exec_context->registers[0] = th->id;
             break;
+
+        case SYSCALL_RunMultiThreadDemo:
+            th = scheduler_kill_current_thread(&thread_scheduler);
+            th->exit_code = (int) arg1;
+            destroy_thread(th);
+            scheduler_update(&thread_scheduler);
+
         default:
             syscall_def_handler(syscall_number);
             break;
@@ -162,6 +169,9 @@ void kernel_syscall_dispatch(context* exec_context){
     enable_irq_interrupt();
 }
 
+void runDemoThread(){
+
+}
 void kernel_ready(){
     p_thread th = create_thread();
     scheduler_schedule_thread(&thread_scheduler, th);
